@@ -1,0 +1,96 @@
+/* ------------------------------------
+   1. VARIABLES CSS (RECURSIVIDAD Y ORDEN)
+   ------------------------------------ */
+   :root {
+    /* Colores */
+    --color-bg-main: #1a1a1a;        /* Fondo oscuro casi negro */
+    --color-neon-primary: #00e090;   /* Verde brillante principal */
+    --color-neon-secondary: #008856; /* Verde oscuro para acentos/bordes */
+    --color-card-bg: #2c2c2c;        /* Fondo de las tarjetas */
+    --color-text-muted: #555;        /* Texto sutil */
+    
+    /* Tipografía y Tamaños */
+    --font-display: 'Consolas', 'Courier New', monospace; /* Fuente de terminal/reloj */
+    --font-body: 'Arial', sans-serif;
+    --size-clock-desktop: 15vw;
+    --size-clock-mobile: 18vw;
+    --size-info: 1.2rem;
+}
+
+/* ------------------------------------
+   2. ESTILOS BASE Y GENERALES (BODY / CONTAINER)
+   ------------------------------------ */
+.app-container {
+    /* Aplica el color de fondo y el color de texto primario desde las variables */
+    background-color: var(--color-bg-main) !important; 
+    color: var(--color-neon-primary);
+    min-height: 100vh;
+    font-family: var(--font-body);
+    overflow: hidden; /* Previene barras de desplazamiento no deseadas */
+}
+
+/* Asegura que el contenedor Bootstrap ocupe el 100% del viewport */
+html, body, .container-fluid {
+    height: 100%;
+}
+
+/* ------------------------------------
+   3. TIPOGRAFÍA Y EFECTO NEÓN (RECURSIVIDAD)
+   ------------------------------------ */
+.neon-text {
+    font-family: var(--font-display);
+    /* Crea el efecto de brillo usando la variable de color */
+    text-shadow: 0 0 5px var(--color-neon-primary), 
+                 0 0 15px rgba(0, 224, 144, 0.4);
+}
+
+.display-time {
+    font-size: var(--size-clock-desktop);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.display-date {
+    font-size: 3vw;
+    opacity: 0.7;
+    margin-bottom: 40px;
+}
+
+/* ------------------------------------
+   4. MÓDULOS (CARDS)
+   ------------------------------------ */
+.card-module {
+    background-color: var(--color-card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    /* Usa la variable de color secundario para un borde sutil */
+    border: 1px solid var(--color-neon-secondary); 
+    box-shadow: 0 0 10px rgba(0, 224, 144, 0.15); /* Sombra sutil de neón */
+}
+
+.card-title {
+    color: var(--color-neon-primary);
+    font-weight: bold;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--color-text-muted);
+    padding-bottom: 5px;
+}
+
+.display-temp {
+    font-size: 5vw;
+    font-weight: 600;
+}
+
+/* ------------------------------------
+   5. ADAPTABILIDAD (RESPONSIVENESS)
+   ------------------------------------ */
+/* Ajustes para móviles verticales (ancho máximo de 768px) */
+@media (max-width: 768px) {
+    .display-time {
+        font-size: var(--size-clock-mobile); /* Hace la hora más grande en móvil */
+    }
+    .display-date {
+        font-size: 5vw;
+    }
+}
