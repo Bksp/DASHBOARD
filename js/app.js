@@ -1,86 +1,63 @@
-/**
- * ARCHIVO: js/app.js
- * LÓGICA PRINCIPAL DEL DASHBOARD
- * Define los componentes de Alpine.js: mainDashboard, timeComponent, weatherComponent.
- */
-
-// ------------------------------------
-// 1. COMPONENTE PRINCIPAL (PERSISTENCIA Y CONFIGURACIÓN)
-// ------------------------------------
-function mainDashboard() {
+// Definimos la función globalmente
+function smartStation() {
     return {
-        // Estado inicial de la configuración del usuario
-        mainConfig: {
-            city: 'Santiago',
-            units: 'C'
-        },
-        nextUpdate: 'Cargando...',
+        // Variables de estado
+        time: '00:00',
+        date: 'INICIANDO...',
+        batteryLevel: null,
+        loading: true,
 
-        // Carga la configuración desde localStorage (PERSISTENCIA)
-        loadSettings() {
-            const savedSettings = localStorage.getItem('dashboard_settings');
-            if (savedSettings) {
-                this.mainConfig = JSON.parse(savedSettings);
-                console.log("Configuración cargada desde localStorage:", this.mainConfig);
-            }
-        },
+        // Función de inicio (se llama desde x-init)
+        initApp() {
+            console.log('✅ Sistema Smart Station Iniciado');
+            this.loading = false;
+            
+            // Iniciar el reloj inmediatamente
+            this.updateClock();
+            
+            // Actualizar cada segundo
+            setInterval(() => {
+                this.updateClock();
+            }, 1000);
 
-        // Guarda la configuración en localStorage
-        saveSettings() {
-            localStorage.setItem('dashboard_settings', JSON.stringify(this.mainConfig));
-            console.log("Configuración guardada.");
-        }
-    }
-}
-
-// ------------------------------------
-// 2. COMPONENTE DE HORA Y FECHA (El Reloj)
-// ------------------------------------
-function timeComponent() {
-    return {
-        time: '--:--',
-        date: 'Cargando fecha...',
-        
-        // Inicializa el reloj
-        initTime() {
-            this.updateTime();
-            // Llama a la función de actualización cada 1000ms (1 segundo)
-            setInterval(() => this.updateTime(), 1000);
+            // Intentar leer batería
+            this.getBattery();
         },
 
-        // Lógica para obtener y formatear la hora/fecha
-        updateTime() {
+        // Lógica del reloj
+        updateClock() {
             const now = new Date();
             
-            // Hora (usando el locale chileno 'es-CL')
-            this.time = now.toLocaleTimeString('es-CL', {
-                hour: '2-digit',
+            // Hora formato 24hrs
+            this.time = now.toLocaleTimeString('es-CL', { 
+                hour: '2-digit', 
                 minute: '2-digit',
-                second: '2-digit'
+                hour12: false 
             });
-            
-            // Fecha
-            this.date = now.toLocaleDateString('es-CL', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long'
-            });
-        }
-    }
-}
 
-// ------------------------------------
-// 3. COMPONENTE DE CLIMA (Placeholder para futuro)
-// ------------------------------------
-function weatherComponent() {
-    return {
-        city: 'N/A',
-        temp: '--',
-        description: 'Esperando datos de API...',
-        
-        fetchWeather() {
-            // Aquí irá la función 'fetch'
-            console.log("Clima listo para fetch.");
+            // Fecha completa
+            this.date = now.toLocaleDateString('es-CL', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long'
+            }).toUpperCase(); // Texto en mayúsculas para estilo terminal
+        },
+
+        // Lógica de batería
+        async getBattery() {
+            if (navigator.getBattery) {
+                try {
+                    const battery = await navigator.getBattery();
+                    this.batteryLevel = Math.round(battery.level * 100);
+                    
+                    // Escuchar cambios en la batería
+                    battery.addEventListener('levelchange', () => {
+                        this.batteryLevel = Math.round(battery.level * 100);
+                    });
+                } catch (e) {
+                    console.log('⚠️ Batería no accesible');
+                }
+            }
         }
     }
 }
