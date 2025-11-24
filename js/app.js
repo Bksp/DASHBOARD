@@ -58,6 +58,23 @@ function smartStation() {
                     console.log('⚠️ Batería no accesible');
                 }
             }
+        },
+        // Dentro de la función global smartStation() en js/app.js,
+        // después de getBattery() y antes del return:
+
+        toggleFullscreen() {
+            // Si NO estamos en pantalla completa, entramos.
+            if (!document.fullscreenElement) {
+                // Solicitamos pantalla completa para el elemento raíz (todo el viewport)
+                document.documentElement.requestFullscreen();
+                
+                // NOTA: Para máxima robustez y compatibilidad con navegadores antiguos
+                // se debería usar prefijos: element.mozRequestFullScreen(), webkitRequestFullScreen().
+            } else {
+                // Si YA estamos en pantalla completa, salimos.
+                document.exitFullscreen();
+            }
         }
+                
     }
 }
