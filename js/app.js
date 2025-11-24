@@ -62,19 +62,40 @@ function smartStation() {
         // Dentro de la función global smartStation() en js/app.js,
         // después de getBattery() y antes del return:
 
+// Dentro de la función global smartStation() en js/app.js:
+
         toggleFullscreen() {
-            // Si NO estamos en pantalla completa, entramos.
-            if (!document.fullscreenElement) {
-                // Solicitamos pantalla completa para el elemento raíz (todo el viewport)
-                document.documentElement.requestFullscreen();
-                
-                // NOTA: Para máxima robustez y compatibilidad con navegadores antiguos
-                // se debería usar prefijos: element.mozRequestFullScreen(), webkitRequestFullScreen().
+            const element = document.documentElement;
+            
+            if (!document.fullscreenElement && 
+                !document.mozFullScreenElement && 
+                !document.webkitFullscreenElement && 
+                !document.msFullscreenElement) 
+            {
+                // Petición de entrada (con todos los prefijos)
+                if (element.requestFullscreen) {
+                    element.requestFullscreen();
+                } else if (element.mozRequestFullScreen) { /* Firefox */
+                    element.mozRequestFullScreen();
+                } else if (element.webkitRequestFullscreen) { /* Chrome, Safari, Opera */
+                    element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                } else if (element.msRequestFullscreen) { /* IE/Edge */
+                    element.msRequestFullscreen();
+                }
             } else {
-                // Si YA estamos en pantalla completa, salimos.
-                document.exitFullscreen();
+                // Petición de salida (con todos los prefijos)
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
             }
         }
+        
                 
     }
 }
