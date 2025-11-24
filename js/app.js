@@ -9,7 +9,7 @@ function smartStation() {
 
         // Función de inicio (se llama desde x-init)
         initApp() {
-            console.log('✅ Sistema Smart Station Iniciado');
+            console.log('✅ Sistema Dashboard Iniciado');
             this.loading = false;
             
             // Iniciar el reloj inmediatamente
