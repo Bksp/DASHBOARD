@@ -1,10 +1,10 @@
 :root {
     --bg-color: #000000;        /* Negro casi puro */
     --neon-green: #00ff41;      /* Verde Terminal */
-    --neon-grey: #c7c7c7;
+    --neon-grey: #ffffff;
     
     --font-mono: 'doto';
-    --color-indicator: #9940ffd0; /* Rojo Nothing o similar */
+    --color-indicator: #ffffffc9; /* Rojo Nothing o similar */
 }
 
 body {
@@ -67,7 +67,7 @@ body {
     z-index: 1; /* Detrás del texto del reloj */
     
     /* Animación muy lenta para simular que está "vivo" */
-    animation: pulse-float 10s ease-in-out infinite alternate;
+    animation: pulse-float 1s ease-in-out infinite alternate;
 }
 
 @keyframes pulse-float {
