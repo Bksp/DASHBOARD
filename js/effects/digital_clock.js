@@ -83,19 +83,25 @@ function digital_clock(matrix) {
 
     // --- MODO VERTICAL (Pantalla Alta, ej: 32x64) ---
     if (ROWS > COLS) {
-        // Orden vertical: Hora, Minutos, Día, Número
         const lines = [hours, minutes, dayName, dayNum];
-        // Colores: Hora/Min en blanco (principal), Día/Num en 'system' (secundario)
         const colors = [ON_COLOR_CLASS, ON_COLOR_CLASS, 'system', 'system'];
 
         // Calcular altura total del bloque para centrarlo verticalmente
         const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 1) * LINE_SPACING);
+        
+        // Calcular el punto de inicio para centrar
         let currentY = Math.floor((ROWS - totalContentHeight) / 2);
+        // AJUSTE VERTICAL: Mover 1 píxel hacia abajo
+        currentY += 1; 
+
+        // AJUSTE HORIZONTAL: Mover 1 píxel hacia la derecha
+        const offsetX = 1; 
 
         // Dibujar cada línea centrada horizontalmente
         lines.forEach((lineText, index) => {
             const lineWidth = calculateTextWidth(lineText);
-            const startX = Math.floor((COLS - lineWidth) / 2);
+            // La posición horizontal se calcula centrada y luego se le suma el offset
+            const startX = Math.floor((COLS - lineWidth) / 2) + offsetX;
             
             // Pasamos showColon solo si estamos en la primera o segunda línea (Horas o Minutos)
             const shouldShowColon = index === 0 || index === 1 ? showColon : true;
@@ -123,19 +129,18 @@ function digital_clock(matrix) {
 
         // 4. CALCULAR POSICIONES HORIZONTALES (AJUSTES)
         
+        const centerDateBlockX = Math.floor(COLS / 2);
+
         // La hora sigue centrada
         const startX_Time = Math.floor((COLS - timeWidth) / 2);
 
-        // Para la fecha, calculamos el punto central del día y el número del día por separado
-        const centerDateBlockX = Math.floor(COLS / 2);
-
-        // Desplazamiento del Nombre del Día: 3 píxeles a la izquierda (-3)
+        // AJUSTE DÍA: 3 píxeles a la izquierda del punto de división (-3)
         const startX_DayName = centerDateBlockX - dayNameWidth - 4; 
 
-        // AJUSTE: El punto se dibuja inmediatamente después del nombre del día + espacio.
+        // AJUSTE PUNTO: Se dibuja después del nombre del día + espacio
         const startX_Dot = startX_DayName + dayNameWidth + LETTER_SPACING;
 
-        // Desplazamiento del Número del Día: 3 píxeles a la derecha (+3)
+        // AJUSTE NÚMERO: 3 píxeles a la derecha del punto de división (+3)
         const startX_DayNum = centerDateBlockX + 3; 
 
         // 5. DIBUJAR
@@ -148,7 +153,6 @@ function digital_clock(matrix) {
         drawText(matrix, dayName, startX_DayName, startY_Date, 'system'); 
         
         // Dibujar Punto (Separador)
-        // El punto se dibujará centrado verticalmente gracias al cambio en font.js
         drawText(matrix, '.', startX_Dot, startY_Date, 'system', true); 
 
         // Dibujar Número del Día (Ej: 25)
