@@ -2,7 +2,7 @@
 import { registerEffect, Config } from '../core.js';
 import { PIXEL_FONT } from '../font.js';
 
-const MESSAGE = "HOLA MUNDO   SYSTEM READY";
+const MESSAGE = "COMPLETOS";
 const SPRITE_WIDTH = 5; 
 const SPRITE_HEIGHT = 7;
 const LETTER_SPACING = 1;

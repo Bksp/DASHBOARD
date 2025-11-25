@@ -124,7 +124,10 @@ function digital_clock(matrix) {
         const totalContentHeight = SPRITE_HEIGHT + LINE_SPACING + SPRITE_HEIGHT;
 
         // 3. CALCULAR POSICIONES (CENTRADO VERTICAL)
-        const startY_Time = Math.floor((ROWS - totalContentHeight) / 2);
+        const base_startY = Math.floor((ROWS - totalContentHeight) / 2);
+        
+        // *** AJUSTE CLAVE: Mover todo 1 píxel hacia abajo ***
+        const startY_Time = base_startY + 1;
         const startY_Date = startY_Time + SPRITE_HEIGHT + LINE_SPACING;
 
         // 4. CALCULAR POSICIONES HORIZONTALES (AJUSTES)

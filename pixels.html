@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixel Display Visual Completo y Adaptable</title>
+    <link rel="icon" type="image/png" href="./img/favicon.png">
     <style>
         /* --- CONSTANTES DEL DISPLAY --- */
         :root {
@@ -61,14 +62,16 @@
         .on { background-color: var(--pixel-color-on); box-shadow: 0 0 5px rgba(77, 77, 77, 0.7); } 
         .bg-noise { background-color: var(--pixel-color-noise); }
         
-        /* Colores con transparencia (b9 = ~72% opacidad) para efecto de cristal/difuso */
-        .red { background-color: #ff3333b9; box-shadow: 0 0 5px rgba(255, 51, 51, 0.7); }
-        .orange { background-color: #ffa500b9; box-shadow: 0 0 5px rgba(255, 165, 0, 0.7); }
-        .yellow { background-color: #ffff00b9; box-shadow: 0 0 5px rgba(255, 255, 0, 0.7); }
-        .green { background-color: #00ff00b9; box-shadow: 0 0 5px rgba(0, 255, 0, 0.7); }
-        .blue { background-color: #00bfffb9; box-shadow: 0 0 5px rgba(0, 191, 255, 0.7); }
-        .purple { background-color: #8a2be2b9; box-shadow: 0 0 5px rgba(138, 43, 226, 0.7); }
-        
+        /* PALETA DE COLORES MEJORADA (ESTILO NEÓN/CYBER) 
+           Se mantiene la transparencia 'b9' (~72%) pero con tonos más sofisticados.
+        */
+        .red    { background-color: #ff003cb9; box-shadow: 0 0 8px rgba(255, 0, 60, 0.7); }   /* Rojo Frambuesa Neón */
+        .orange { background-color: #ff5e00b9; box-shadow: 0 0 8px rgba(255, 94, 0, 0.7); }   /* Naranja Fuego */
+        .yellow { background-color: #ffde00b9; box-shadow: 0 0 8px rgba(255, 222, 0, 0.7); }  /* Amarillo Cyber */
+        .green  { background-color: #39ff14b9; box-shadow: 0 0 8px rgba(57, 255, 20, 0.7); }   /* Verde Tóxico */
+        .blue   { background-color: #00f3ffb9; box-shadow: 0 0 8px rgba(0, 243, 255, 0.7); }  /* Cian Eléctrico */
+        .purple { background-color: #b026ffb9; box-shadow: 0 0 8px rgba(176, 38, 255, 0.7); }  /* Violeta Intenso */
+          
         /* Nueva clase system para textos secundarios */
         .system { background-color: #969696b9; box-shadow: 0 0 5px #303030b9; }
     </style>
@@ -90,7 +93,10 @@
     <script type="module" src="js/effects/key_tester.js"></script>
     <script type="module" src="js/effects/scrolling_marquee.js"></script>
     <script type="module" src="js/effects/spectrum_analyzer.js"></script>
-    
+    <script type="module" src="js/effects/fireworks.js"></script>
+    <script type="module" src="js/effects/led_tracker.js"></script>
+    <script type="module" src="js/effects/clock_fireworks.js"></script>
+
     <script type="module">
         import { initializeDisplay, detectAndSetDimensions } from './js/core.js'; 
         

@@ -24,18 +24,48 @@ const KEY_QUEUE = [];
 // *** CAMBIO CLAVE: Aumentado el límite para llenar la pantalla ***
 const MAX_KEY_HISTORY = 300; 
 
+// --- GESTIÓN DE ENTRADA DE RATÓN ---
+// Añadir estado para rastrear la posición del ratón
+let mousePosition = { c: -1, r: -1 }; 
+
+function handleMouseMove(e) {
+    const rect = document.getElementById('pixel-grid').getBoundingClientRect();
+    // Usamos LOGICAL_COLS/ROWS para mapear al área de animación central
+    const pixelSizeX = rect.width / LOGICAL_COLS;
+    const pixelSizeY = rect.height / LOGICAL_ROWS;
+
+    // Calcular la posición lógica (0 a LOGICAL_COLS/ROWS)
+    const rawC = (e.clientX - rect.left) / pixelSizeX;
+    const rawR = (e.clientY - rect.top) / pixelSizeY;
+    
+    // Almacenar la posición entera dentro de los límites lógicos
+    mousePosition.c = Math.min(LOGICAL_COLS - 1, Math.max(0, Math.floor(rawC)));
+    mousePosition.r = Math.min(LOGICAL_ROWS - 1, Math.max(0, Math.floor(rawR)));
+}
+
+// --- NUEVA FUNCIÓN PARA CAMBIAR EFECTO (USADA POR expanding_circle) ---
+export function switchEffect(effectName) {
+    if (EFFECTS_NAME_LIST_MASTER.includes(effectName)) {
+        currentEffectName = effectName;
+        animationFrameCount = 0;
+        console.log(`Efecto cambiado forzosamente a: ${effectName}`);
+    }
+}
+
 // --- LISTA MAESTRA DE EFECTOS ---
+// Orden solicitado por el usuario
 const EFFECTS_NAME_LIST_MASTER = [
-    'digital_clock',   
-    'key_tester',   
-    'static_noise', 
-    'matrix_rain', 
-    'oscillating_line',
+    //'clock_fireworks',   
+    'digital_clock',
     'color_plasma', 
     'expanding_circle', 
-    'pixel_rain',
-    'spectrum_analyzer',
-    'scrolling_marquee'
+    'fireworks',
+    'key_tester', 
+    'led_tracker',
+    // 'matrix_rain',
+    'scrolling_marquee',
+    // 'spectrum_analyzer',
+
 ];
 
 let currentEffectName = EFFECTS_NAME_LIST_MASTER[0]; 
@@ -167,6 +197,13 @@ export function initializeDisplay() {
     addEvent(wrapper, 'click', handleClick, true);
     addEvent(document, 'keydown', handleKeyDown);
 
+    // AÑADIDO: Eventos de movimiento de ratón/tacto
+    addEvent(wrapper, 'mousemove', handleMouseMove);
+    addEvent(wrapper, 'touchmove', (e) => { 
+        // Usamos el primer toque para simular el movimiento del ratón
+        if (e.touches.length > 0) handleMouseMove(e.touches[0]); 
+    }, {passive: true});
+
     if (!window.animationFrameId) {
         mainLoop();
     }
@@ -244,4 +281,9 @@ export const Config = {
 
 export const KeyInput = {
     KEY_QUEUE: KEY_QUEUE
+};
+
+// --- EXPORTAR ENTRADA DE RATÓN (NUEVO) ---
+export const MouseInput = {
+    position: mousePosition
 };
