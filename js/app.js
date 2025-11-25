@@ -59,10 +59,7 @@ function smartStation() {
                 }
             }
         },
-        // Dentro de la función global smartStation() en js/app.js,
-        // después de getBattery() y antes del return:
-
-// Dentro de la función global smartStation() en js/app.js:
+        // Lógica de pantalla completa
 
         toggleFullscreen() {
             const element = document.documentElement;

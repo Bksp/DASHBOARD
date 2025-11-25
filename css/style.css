@@ -4,6 +4,7 @@
     --neon-grey: #c7c7c7;
     
     --font-mono: 'doto';
+    --color-indicator: #9940ffd0; /* Rojo Nothing o similar */
 }
 
 body {
@@ -41,4 +42,42 @@ body {
 /* Utilidad para bordes neón suaves */
 .neon-border {
     box-shadow: 0 0 5px
+}
+
+/* ------------------------------------
+   4. NOTHING GLOW (El Resplandor Rojo)
+   ------------------------------------ */
+   #floating-indicator {
+    position: fixed;
+    
+    /* Dimensiones masivas para cubrir el área inferior */
+    width: 250vw;  
+    height: 250vw; 
+    
+    /* Posiciona el centro del círculo fuera de la pantalla */
+    left: -75vw; 
+    bottom: -220vw; 
+    
+    background-color: var(--color-indicator); 
+    border-radius: 50%; 
+    
+    /* Brillo difuso */
+    box-shadow: 0 0 100px var(--color-indicator); 
+    
+    opacity: 0.85; 
+    z-index: 1; /* Detrás del texto del reloj */
+    
+    /* Animación muy lenta para simular que está "vivo" */
+    animation: pulse-float 10s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-float {
+    from {
+        transform: translateY(0);
+        opacity: 0.85;
+    }
+    to {
+        transform: translateY(-2px); /* Movimiento vertical sutil */
+        opacity: 0.95;
+    }
 }
