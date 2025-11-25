@@ -51,18 +51,17 @@ body {
     position: fixed;
     
     /* Dimensiones masivas para cubrir el área inferior */
-    width: 250vw;  
-    height: 250vw; 
+    width: 130vw;  
+    height: 130vw; 
     
     /* Posiciona el centro del círculo fuera de la pantalla */
-    left: -75vw; 
-    bottom: -220vw; 
+    bottom: -120vw; 
     
     background-color: var(--color-indicator); 
     border-radius: 50%; 
     
     /* Brillo difuso */
-    box-shadow: 0 0 100px var(--color-indicator); 
+    box-shadow: 0 0 30px var(--color-indicator); 
     
     opacity: 0.85; 
     z-index: 1; /* Detrás del texto del reloj */
