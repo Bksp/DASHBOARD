@@ -109,28 +109,50 @@ function digital_clock(matrix) {
     } else {
         // MODO HORIZONTAL / CUADRADO (Standard 32x32, 64x32)
         const timeStr = `${hours}:${minutes}`; 
-        const dateStr = `${dayName} ${dayNum}`; 
-
+        
         // 2. CALCULAR DIMENSIONES DE CONTENIDO
         const timeWidth = calculateTextWidth(timeStr);
-        const dateWidth = calculateTextWidth(dateStr);
+        const dayNameWidth = calculateTextWidth(dayName);
         
         // Altura total del bloque de contenido (Hora + Espacio + Fecha)
         const totalContentHeight = SPRITE_HEIGHT + LINE_SPACING + SPRITE_HEIGHT;
 
-        // 3. CALCULAR POSICIONES (CENTRADO)
+        // 3. CALCULAR POSICIONES (CENTRADO VERTICAL)
         const startY_Time = Math.floor((ROWS - totalContentHeight) / 2);
         const startY_Date = startY_Time + SPRITE_HEIGHT + LINE_SPACING;
 
+        // 4. CALCULAR POSICIONES HORIZONTALES (AJUSTES)
+        
+        // La hora sigue centrada
         const startX_Time = Math.floor((COLS - timeWidth) / 2);
-        const startX_Date = Math.floor((COLS - dateWidth) / 2);
 
-        // 4. DIBUJAR
-        // Pasamos showColon para que los ':' parpadeen en la hora
+        // Para la fecha, calculamos el punto central del día y el número del día por separado
+        const centerDateBlockX = Math.floor(COLS / 2);
+
+        // Desplazamiento del Nombre del Día: 3 píxeles a la izquierda (-3)
+        const startX_DayName = centerDateBlockX - dayNameWidth - 4; 
+
+        // AJUSTE: El punto se dibuja inmediatamente después del nombre del día + espacio.
+        const startX_Dot = startX_DayName + dayNameWidth + LETTER_SPACING;
+
+        // Desplazamiento del Número del Día: 3 píxeles a la derecha (+3)
+        const startX_DayNum = centerDateBlockX + 3; 
+
+        // 5. DIBUJAR
+        // Hora: Mantenemos centrado y parpadeo de dos puntos
         drawText(matrix, timeStr, startX_Time, startY_Time, ON_COLOR_CLASS, showColon);
         
-        // La fecha siempre se muestra fija
-        drawText(matrix, dateStr, startX_Date, startY_Date, 'system'); 
+        // Fecha: Dibujar Nombre del Día (izq), Punto (centro), y Número del Día (der)
+        
+        // Dibujar Nombre del Día (Ej: DO, LU)
+        drawText(matrix, dayName, startX_DayName, startY_Date, 'system'); 
+        
+        // Dibujar Punto (Separador)
+        // El punto se dibujará centrado verticalmente gracias al cambio en font.js
+        drawText(matrix, '.', startX_Dot, startY_Date, 'system', true); 
+
+        // Dibujar Número del Día (Ej: 25)
+        drawText(matrix, dayNum, startX_DayNum, startY_Date, 'system'); 
     }
 
     return matrix;

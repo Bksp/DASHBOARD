@@ -19,9 +19,15 @@ const LONG_PRESS_DURATION = 800; // ms para activar fullscreen
 let isLongPress = false;
 let pressTimer = null;
 
+// --- GESTIÓN DE ENTRADA DE TECLADO ---
+const KEY_QUEUE = [];
+// *** CAMBIO CLAVE: Aumentado el límite para llenar la pantalla ***
+const MAX_KEY_HISTORY = 300; 
+
 // --- LISTA MAESTRA DE EFECTOS ---
 const EFFECTS_NAME_LIST_MASTER = [
-    'digital_clock',      
+    'digital_clock',   
+    'key_tester',   
     'static_noise', 
     'matrix_rain', 
     'oscillating_line',
@@ -89,9 +95,8 @@ function toggleFullscreen() {
     }
 }
 
-// --- MANEJADORES DE EVENTOS ---
+// --- MANEJADORES DE EVENTOS DE MOUSE/TOUCH ---
 function startPress(e) {
-    // Solo botón izquierdo o toque
     if (e.type === 'mousedown' && e.button !== 0) return;
     
     isLongPress = false;
@@ -108,26 +113,39 @@ function cancelPress() {
 
 function handleClick(e) {
     if (isLongPress) {
-        // Si fue long press, detenemos la propagación para no cambiar efecto
         e.stopImmediatePropagation();
         e.preventDefault();
         isLongPress = false;
     } else {
-        // Si fue click corto, cambiamos efecto
         cycleEffect();
     }
 }
 
-// --- FUNCIÓN DE INICIALIZACIÓN: CREAR DIVS E INTERACCIÓN ---
+// --- MANEJADOR DE EVENTOS DE TECLADO ---
+function handleKeyDown(e) {
+    if (e.repeat || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return; 
+    
+    const key = e.key.toUpperCase();
+
+    KEY_QUEUE.push({
+        key: key,
+        timestamp: Date.now()
+    });
+
+    if (KEY_QUEUE.length > MAX_KEY_HISTORY) {
+        KEY_QUEUE.shift();
+    }
+}
+
+// --- FUNCIÓN DE INICIALIZACIÓN ---
 export function initializeDisplay() {
     const gridContainer = document.getElementById('pixel-grid');
-    const wrapper = document.querySelector('.display-wrapper'); // Usamos el wrapper para eventos
+    const wrapper = document.querySelector('.display-wrapper'); 
     
     if (!gridContainer || !wrapper) return;
     
     gridContainer.innerHTML = ''; 
 
-    // Crear Píxeles
     for (let i = 0; i < COLS * ROWS; i++) {
         const pixel = document.createElement('div');
         pixel.className = 'pixel';
@@ -135,27 +153,20 @@ export function initializeDisplay() {
         gridContainer.appendChild(pixel);
     }
     
-    // --- GESTIÓN DE EVENTOS (Limpiar anteriores y añadir nuevos) ---
-    // Usamos una función auxiliar para remover y añadir limpiamente
     const addEvent = (el, type, handler, options) => {
         el.removeEventListener(type, handler, options);
         el.addEventListener(type, handler, options);
     };
 
-    // Mouse
     addEvent(wrapper, 'mousedown', startPress);
     addEvent(wrapper, 'mouseup', cancelPress);
     addEvent(wrapper, 'mouseleave', cancelPress);
-
-    // Touch
     addEvent(wrapper, 'touchstart', startPress, {passive: true});
     addEvent(wrapper, 'touchend', cancelPress);
     addEvent(wrapper, 'touchmove', cancelPress);
-
-    // Click (Fase de captura para interceptar)
     addEvent(wrapper, 'click', handleClick, true);
+    addEvent(document, 'keydown', handleKeyDown);
 
-    // Iniciar bucle
     if (!window.animationFrameId) {
         mainLoop();
     }
@@ -166,7 +177,6 @@ function cycleEffect() {
     if (EFFECTS_LIST.length === 0) return;
     
     const currentIndex = EFFECTS_LIST.indexOf(currentEffectName);
-    // Si falla la búsqueda, volver al principio
     const baseIndex = currentIndex === -1 ? 0 : currentIndex;
     const nextIndex = (baseIndex + 1) % EFFECTS_LIST.length;
     
@@ -224,10 +234,14 @@ function applyVisualMapping(logicalData) {
     }
 }
 
-// --- EXPORTAR CONFIG ---
+// --- EXPORTAR ---
 export const Config = { 
     COLS: LOGICAL_COLS, 
     ROWS: LOGICAL_ROWS, 
     NOISE_CLASS, 
     ON_COLOR_CLASS 
+};
+
+export const KeyInput = {
+    KEY_QUEUE: KEY_QUEUE
 };
