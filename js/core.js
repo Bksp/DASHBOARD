@@ -19,11 +19,11 @@ let animationFrameCount = 0;
 // --- LISTA MAESTRA DE EFECTOS ---
 // ACTUALIZADO: Esta lista ahora coincide exactamente con los archivos de tu carpeta 'effects'
 const EFFECTS_NAME_LIST_MASTER = [
-    // 'digital_clock',      // El reloj
-    // 'color_plasma',       // El efecto de colores
-    // matrix_rain',        // Lluvia tipo Matrix
-    // 'scrolling_marquee',  // Texto que se desplaza
-    // 'spectrum_analyzer',  // Visualizador de audio simulado
+    'digital_clock',      // El reloj
+    'color_plasma',       // El efecto de colores
+    'matrix_rain',        // Lluvia tipo Matrix
+    'scrolling_marquee',  // Texto que se desplaza
+    'spectrum_analyzer',  // Visualizador de audio simulado
     'expanding_circle',      // Ruido estático
 ];
 
