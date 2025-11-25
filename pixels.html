@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Display Modular (32x32)</title>
+    <title>Pixel Display Visual Completo y Adaptable</title>
     <style>
         /* --- CONSTANTES DEL DISPLAY --- */
         :root {
-            --grid-size: 32;
-            --pixel-color-off: #000000; 
-            --pixel-color-noise: #000000; 
+            --grid-cols: 32; /* Se actualiza por JS (Dimensión Visual) */
+            --grid-rows: 32; /* Se actualiza por JS (Dimensión Visual) */
+            --pixel-color-off: #000000; /* Color de fondo / Líneas del grid */
+            --pixel-color-noise: #0f0f0f; /* Color de la celda LED apagada */
             --pixel-color-on: #ffffff;
         }
 
-        /* --- ESTILOS BASE Y CUERPO (Minimalista) --- */
+        /* --- ESTILOS BASE Y CUERPO --- */
         body {
             background-color: var(--pixel-color-off); 
             display: flex;
@@ -24,22 +25,25 @@
             overflow: hidden; 
         }
 
-        /* --- CONTENEDOR DEL DISPLAY --- */
+        /* --- CONTENEDOR DEL DISPLAY (Fuerza pantalla completa) --- */
         .display-wrapper {
-            /* Asegura que el display ocupe el mayor cuadrado posible */
-            width: min(100vw, 100vh); 
-            height: min(100vw, 100vh); 
             background-color: var(--pixel-color-off); 
-            cursor: pointer; /* Indicador de que es interactivo */
+            cursor: default;
+            width: 100vw; /* Ocupa todo el ancho */
+            height: 100vh; /* Ocupa todo el alto */
         }
 
         .pixel-display {
             display: grid;
-            grid-template-columns: repeat(var(--grid-size), 1fr);
-            grid-template-rows: repeat(var(--grid-size), 1fr);
+            /* El grid se dibuja según las dimensiones visuales que JS calcula */
+            grid-template-columns: repeat(var(--grid-cols), 1fr);
+            grid-template-rows: repeat(var(--grid-rows), 1fr);
             width: 100%;
             height: 100%;
-            background-color: var(--pixel-color-noise); 
+            
+            /* CAMBIO CLAVE: Usamos el color OFF para el fondo y GAP para las líneas */
+            background-color: var(--pixel-color-off); 
+            gap: 1px; /* Esta es la línea de separación entre LEDs (color del grid) */
         }
 
         /* --- ESTILOS DEL PIXEL (LED) --- */
@@ -47,16 +51,26 @@
             box-sizing: border-box;
             background-color: var(--pixel-color-noise); 
             transition: background-color 0.1s ease-out; 
+            
+            /* Borde eliminado para usar gap como separador limpio */
+            border: none; 
+            border-radius: 1px; /* Opcional: suaviza ligeramente las esquinas del LED */
         }
 
-        /* CLASES DE COLOR */
-        .on { 
-            background-color: var(--pixel-color-on); 
-            box-shadow: 0 0 5px rgba(77, 77, 77, 0.7); 
-        } 
-        .bg-noise { 
-            background-color: var(--pixel-color-noise);
-        }
+        /* CLASES DE COLOR ADICIONALES (Necesarias para los efectos) */
+        .on { background-color: var(--pixel-color-on); box-shadow: 0 0 5px rgba(77, 77, 77, 0.7); } 
+        .bg-noise { background-color: var(--pixel-color-noise); }
+        
+        /* Colores con transparencia (b9 = ~72% opacidad) para efecto de cristal/difuso */
+        .red { background-color: #ff3333b9; box-shadow: 0 0 5px rgba(255, 51, 51, 0.7); }
+        .orange { background-color: #ffa500b9; box-shadow: 0 0 5px rgba(255, 165, 0, 0.7); }
+        .yellow { background-color: #ffff00b9; box-shadow: 0 0 5px rgba(255, 255, 0, 0.7); }
+        .green { background-color: #00ff00b9; box-shadow: 0 0 5px rgba(0, 255, 0, 0.7); }
+        .blue { background-color: #00bfffb9; box-shadow: 0 0 5px rgba(0, 191, 255, 0.7); }
+        .purple { background-color: #8a2be2b9; box-shadow: 0 0 5px rgba(138, 43, 226, 0.7); }
+        
+        /* Nueva clase system para textos secundarios */
+        .system { background-color: #969696b9; box-shadow: 0 0 5px #303030b9; }
     </style>
 </head>
 <body>
@@ -65,16 +79,45 @@
             </div>
     </div>
 
+    <!-- Carga de la lógica central -->
     <script type="module" src="js/core.js"></script>
     
-    <script type="module" src="js/effects/static_noise.js"></script>
+    <!-- Módulos de Efectos -->
+    <script type="module" src="js/effects/color_plasma.js"></script>
+    <script type="module" src="js/effects/digital_clock.js"></script>
+    <script type="module" src="js/effects/matrix_rain.js"></script>
     <script type="module" src="js/effects/oscillating_line.js"></script>
+    <script type="module" src="js/effects/expanding_circle.js"></script>
+    <script type="module" src="js/effects/spectrum_analyzer.js"></script>
+    <script type="module" src="js/effects/scrolling_marquee.js"></script>
     
     <script type="module">
-        // Importamos la función de inicialización y la ejecutamos al cargar la página
-        import { initializeDisplay } from './js/core.js'; 
+        import { initializeDisplay, detectAndSetDimensions } from './js/core.js'; 
         
+        // Define el tamaño base de cada píxel en la pantalla.
+        // Puedes ajustar este valor si quieres que los píxeles sean más grandes o pequeños en general
+        const BASE_PIXEL_SIZE = 16; 
+        
+        function calculateVisualDimensions() {
+            // Calcula cuántos píxeles de 16x16 caben en el ancho y alto del viewport
+            const visualCols = Math.floor(window.innerWidth / BASE_PIXEL_SIZE);
+            const visualRows = Math.floor(window.innerHeight / BASE_PIXEL_SIZE);
+
+            // 1. Actualiza las variables CSS (grid-template)
+            document.documentElement.style.setProperty('--grid-cols', visualCols);
+            document.documentElement.style.setProperty('--grid-rows', visualRows);
+            
+            // 2. Llama a la lógica central para que determine el área de la animación y los offsets.
+            detectAndSetDimensions(visualCols, visualRows);
+        }
+        
+        calculateVisualDimensions();
         document.addEventListener('DOMContentLoaded', initializeDisplay);
+        
+        // Vuelve a calcular y re-inicializar al cambiar el tamaño o la orientación
+        window.addEventListener('resize', () => {
+             calculateVisualDimensions();
+        });
     </script>
 </body>
 </html>
