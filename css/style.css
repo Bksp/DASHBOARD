@@ -47,26 +47,26 @@ body {
 /* ------------------------------------
    4. NOTHING GLOW (El Resplandor Rojo)
    ------------------------------------ */
-   #floating-indicator {
+#floating-indicator {
     position: fixed;
     
-    /* Dimensiones masivas para cubrir el área inferior */
+    /* Mantenemos tus dimensiones y posición: */
     width: 130vw;  
     height: 130vw; 
-    
-    /* Posiciona el centro del círculo fuera de la pantalla */
-    bottom: -120vw; 
+    left: -15vw; 
+    bottom: -130vw; 
     
     background-color: var(--color-indicator); 
     border-radius: 50%; 
     
-    /* Brillo difuso */
-    box-shadow: 0 0 30px var(--color-indicator); 
+    /* 👇 DIFUSIÓN AUMENTADA: De 30px a 200px para suavizar la luz */
+    box-shadow: 0 0 200px var(--color-indicator); 
     
-    opacity: 0.85; 
-    z-index: 1; /* Detrás del texto del reloj */
+    /* 👇 OPACIDAD BAJADA: Para que se mezcle más con el fondo negro */
+    opacity: 0.7; 
+    z-index: 1; 
     
-    /* Animación muy lenta para simular que está "vivo" */
+    /* Animación... */
     animation: pulse-float 1s ease-in-out infinite alternate;
 }
 
