@@ -51,19 +51,17 @@ body {
     position: fixed;
     
     /* Mantenemos tus dimensiones y posición: */
-    width: 130vw;  
-    height: 130vw; 
-    left: -15vw; 
-    bottom: -130vw; 
-    
-    background-color: var(--color-indicator); 
-    border-radius: 50%; 
+    width: 270vw;  
+    height: 130vw;  
+    bottom: -130.4vw; 
+    background-color: var(--color-indicator);
+    border-radius: 100%; 
     
     /* 👇 DIFUSIÓN AUMENTADA: De 30px a 200px para suavizar la luz */
-    box-shadow: 0 0 200px var(--color-indicator); 
+    box-shadow: 0 0 130px var(--color-indicator); 
     
     /* 👇 OPACIDAD BAJADA: Para que se mezcle más con el fondo negro */
-    opacity: 0.7; 
+    opacity: 0.8; 
     z-index: 1; 
     
     /* Animación... */
@@ -76,7 +74,7 @@ body {
         opacity: 0.85;
     }
     to {
-        transform: translateY(-2px); /* Movimiento vertical sutil */
+        transform: translateY(-4px); /* Movimiento vertical sutil */
         opacity: 0.95;
     }
 }
