@@ -101,7 +101,7 @@ function drawClock(matrix) {
     if (ROWS > COLS) {
         // --- MODO VERTICAL ---
         const lines = [hours, minutes, dayName, dayNum];
-        const colors = [ON_COLOR_CLASS, ON_COLOR_CLASS, 'system', 'system'];
+        const colors = [ON_COLOR_CLASS, ON_COLOR_CLASS, 'on', 'on'];
         
         const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 1) * LINE_SPACING);
         let currentY = Math.floor((ROWS - totalContentHeight) / 2) + 1;
@@ -134,9 +134,9 @@ function drawClock(matrix) {
         const startX_DayNum = centerDateBlockX + 3; 
 
         drawText(matrix, timeStr, startX_Time, startY_Time, ON_COLOR_CLASS, showColon);
-        drawText(matrix, dayName, startX_DayName, startY_Date, 'system'); 
-        drawText(matrix, '.', startX_Dot, startY_Date, 'system', true); 
-        drawText(matrix, dayNum, startX_DayNum, startY_Date, 'system'); 
+        drawText(matrix, dayName, startX_DayName, startY_Date, 'on'); 
+        drawText(matrix, '.', startX_Dot, startY_Date, 'on', true); 
+        drawText(matrix, dayNum, startX_DayNum, startY_Date, 'on'); 
     }
 }
 

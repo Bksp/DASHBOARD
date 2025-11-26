@@ -57,6 +57,7 @@ export function switchEffect(effectName) {
 const EFFECTS_NAME_LIST_MASTER = [
     //'clock_fireworks',   
     'digital_clock',
+    // 'donation_qr',
     'color_plasma', 
     'expanding_circle', 
     'fireworks',

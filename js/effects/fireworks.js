@@ -1,8 +1,8 @@
 import { registerEffect, Config } from '../core.js';
 
 // --- CONFIGURACIÓN DE PARTÍCULAS ---
-const COLORS = ['on','system', Config.ON_COLOR_CLASS];
-const NUM_PARTICLES = 50; 
+const COLORS = ['on','system','red', Config.ON_COLOR_CLASS];
+const NUM_PARTICLES = 10; 
 const GRAVITY = 0.00; // REDUCIDO A CERO (la gravedad no existe para las partículas de fuego artificial)
 const ASCENT_SPEED = 0.2; // Velocidad de subida del cohete
 const EXPLOSION_FACTOR = 4; // <--- AJUSTADO A 4 PARA UNA EXPLOSIÓN MÁS LENTA

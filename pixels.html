@@ -62,9 +62,7 @@
         .on { background-color: var(--pixel-color-on); box-shadow: 0 0 5px rgba(200, 200, 200, 0.7); } 
         .bg-noise { background-color: var(--pixel-color-noise); }
         
-        /* PALETA DE COLORES MEJORADA (ESTILO NEÓN/CYBER) 
-           Se mantiene la transparencia 'b9' (~72%) pero con tonos más sofisticados.
-        */
+        /* PALETA DE COLORES MEJORADA (ESTILO NEÓN/CYBER) */
         .red    { background-color: #ff003cb9; box-shadow: 0 0 8px rgba(255, 0, 60, 0.7); }   /* Rojo Frambuesa Neón */
         .orange { background-color: #ff5e00b9; box-shadow: 0 0 8px rgba(255, 94, 0, 0.7); }   /* Naranja Fuego */
         .yellow { background-color: #ffde00b9; box-shadow: 0 0 8px rgba(255, 222, 0, 0.7); }  /* Amarillo Cyber */
@@ -76,9 +74,8 @@
         .system { background-color: #969696b9; box-shadow: 0 0 5px #303030b9; }
 
         /* --- NUEVO: RESPLANDOR ESTILO NOTHING (GLOW) --- */
-        /* Fondo muy tenue (casi transparente) pero con una sombra muy difusa y amplia */
         .purple-glow { 
-            background-color: rgba(176, 38, 255, 0.25); /* Un poco más sutil que el sólido */
+            background-color: rgba(176, 38, 255, 0.25); 
             box-shadow: 0 0 15px 4px rgba(176, 38, 255, 0.65); 
             z-index: 0;
         }
@@ -92,6 +89,9 @@
 
     <!-- Carga de la lógica central -->
     <script type="module" src="js/core.js"></script>
+
+    <!-- LIBRERÍA QR EXTERNA (IMPRESCINDIBLE) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
     
     <!-- Módulos de Efectos -->
     <script type="module" src="js/effects/color_plasma.js"></script>
@@ -102,58 +102,55 @@
     <script type="module" src="js/effects/scrolling_marquee.js"></script>
     <script type="module" src="js/effects/spectrum_analyzer.js"></script>
     <script type="module" src="js/effects/fireworks.js"></script>
-    <script type="module" src="js/effects/clock_fireworks.js"></script> 
-    <script type="module" src="js/effects/led_tracker.js"></script>
-    <script type="module" src="js/effects/tetris_clock.js"></script>
-    <!-- Eliminé led_tracker de aquí si no se usa, o asegúrate de que el archivo exista -->
+    <script type="module" src="js/effects/clock_fireworks.js"></script>
+    <script type="module" src="js/effects/tetris_clock.js"></script> 
+    <!-- NUEVO EFECTO DONACIÓN -->
+    <script type="module" src="js/effects/donation_qr.js"></script> 
     
     <script type="module">
         import { initializeDisplay, detectAndSetDimensions } from './js/core.js'; 
         
-        // Define el tamaño base de cada píxel en la pantalla.
-        const BASE_PIXEL_SIZE = 21; 
-        
         function calculateVisualDimensions() {
-            let currentPixelSize = BASE_PIXEL_SIZE;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const aspectRatio = width / height;
 
-            // --- LÓGICA DE ZOOM OUT PARA MÓVILES (20:9 y 9:20 XIAOMI, ETC.) ---
-            const aspectRatio = window.innerHeight / window.innerWidth;
-            
-            // CASO 1: VERTICAL ESTRECHO (Ratio > 2.0, ej: 20:9 en vertical)
-            // Problema: Falta ancho. Solución: Reducir píxel hasta que quepan al menos 34 columnas.
-            if (aspectRatio > 2.0) {
-                const zoomOutPixelSize = Math.floor(window.innerWidth / 34);
-                
-                if (zoomOutPixelSize < BASE_PIXEL_SIZE) {
-                    currentPixelSize = zoomOutPixelSize;
-                }
+            // --- LÓGICA DE ESCALADO ADAPTATIVO ---
+            let targetCols = 36; 
+            let targetRows = 36; 
+
+            if (aspectRatio < 0.65) {
+                targetRows = 70; 
+                targetCols = 36; 
             }
-            // CASO 2: HORIZONTAL ESTRECHO (Ratio < 0.5, ej: 20:9 en horizontal)
-            // Problema: Falta altura. Solución: Reducir píxel hasta que quepan al menos 34 filas.
-            else if (aspectRatio < 0.5) {
-                const zoomOutPixelSize = Math.floor(window.innerHeight / 34);
-                
-                if (zoomOutPixelSize < BASE_PIXEL_SIZE) {
-                    currentPixelSize = zoomOutPixelSize;
-                }
+            else if (aspectRatio > 1.6) {
+                targetCols = 70; 
+                targetRows = 36; 
             }
 
-            // Calcula cuántos píxeles caben en el ancho y alto del viewport usando el tamaño ajustado
-            const visualCols = Math.floor(window.innerWidth / currentPixelSize);
-            const visualRows = Math.floor(window.innerHeight / currentPixelSize);
+            const sizeFromWidth = Math.floor(width / targetCols);
+            const sizeFromHeight = Math.floor(height / targetRows);
 
-            // 1. Actualiza las variables CSS (grid-template)
+            let finalPixelSize = Math.min(sizeFromWidth, sizeFromHeight);
+
+            const MAX_PIXEL_SIZE = 24; 
+            const MIN_PIXEL_SIZE = 8; 
+
+            if (finalPixelSize > MAX_PIXEL_SIZE) finalPixelSize = MAX_PIXEL_SIZE;
+            if (finalPixelSize < MIN_PIXEL_SIZE) finalPixelSize = MIN_PIXEL_SIZE;
+
+            const visualCols = Math.floor(width / finalPixelSize);
+            const visualRows = Math.floor(height / finalPixelSize);
+
             document.documentElement.style.setProperty('--grid-cols', visualCols);
             document.documentElement.style.setProperty('--grid-rows', visualRows);
             
-            // 2. Llama a la lógica central para que determine el área de la animación y los offsets.
             detectAndSetDimensions(visualCols, visualRows);
         }
         
         calculateVisualDimensions();
         document.addEventListener('DOMContentLoaded', initializeDisplay);
         
-        // Vuelve a calcular y re-inicializar al cambiar el tamaño o la orientación
         window.addEventListener('resize', () => {
              calculateVisualDimensions();
         });
