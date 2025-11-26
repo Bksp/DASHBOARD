@@ -60,11 +60,12 @@ const EFFECTS_NAME_LIST_MASTER = [
     'color_plasma', 
     'expanding_circle', 
     'fireworks',
-    'key_tester', 
-    'led_tracker',
+    // 'key_tester', 
+    // 'led_tracker',
     // 'matrix_rain',
-    'scrolling_marquee',
+    // 'scrolling_marquee',
     // 'spectrum_analyzer',
+    'tetris_clock',
 
 ];
 
