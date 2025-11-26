@@ -59,7 +59,7 @@
         }
 
         /* CLASES DE COLOR ADICIONALES (Necesarias para los efectos) */
-        .on { background-color: var(--pixel-color-on); box-shadow: 0 0 5px rgba(77, 77, 77, 0.7); } 
+        .on { background-color: var(--pixel-color-on); box-shadow: 0 0 5px rgba(200, 200, 200, 0.7); } 
         .bg-noise { background-color: var(--pixel-color-noise); }
         
         /* PALETA DE COLORES MEJORADA (ESTILO NEÓN/CYBER) 
@@ -71,9 +71,17 @@
         .green  { background-color: #39ff14b9; box-shadow: 0 0 8px rgba(57, 255, 20, 0.7); }   /* Verde Tóxico */
         .blue   { background-color: #00f3ffb9; box-shadow: 0 0 8px rgba(0, 243, 255, 0.7); }  /* Cian Eléctrico */
         .purple { background-color: #b026ffb9; box-shadow: 0 0 8px rgba(176, 38, 255, 0.7); }  /* Violeta Intenso */
-          
+        
         /* Nueva clase system para textos secundarios */
         .system { background-color: #969696b9; box-shadow: 0 0 5px #303030b9; }
+
+        /* --- NUEVO: RESPLANDOR ESTILO NOTHING (GLOW) --- */
+        /* Fondo muy tenue (casi transparente) pero con una sombra muy difusa y amplia */
+        .purple-glow { 
+            background-color: rgba(176, 38, 255, 0.25); /* Un poco más sutil que el sólido */
+            box-shadow: 0 0 15px 4px rgba(176, 38, 255, 0.65); 
+            z-index: 0;
+        }
     </style>
 </head>
 <body>
@@ -94,20 +102,43 @@
     <script type="module" src="js/effects/scrolling_marquee.js"></script>
     <script type="module" src="js/effects/spectrum_analyzer.js"></script>
     <script type="module" src="js/effects/fireworks.js"></script>
-    <script type="module" src="js/effects/led_tracker.js"></script>
-    <script type="module" src="js/effects/clock_fireworks.js"></script>
-
+    <script type="module" src="js/effects/clock_fireworks.js"></script> 
+    <!-- Eliminé led_tracker de aquí si no se usa, o asegúrate de que el archivo exista -->
+    
     <script type="module">
         import { initializeDisplay, detectAndSetDimensions } from './js/core.js'; 
         
         // Define el tamaño base de cada píxel en la pantalla.
-        // Puedes ajustar este valor si quieres que los píxeles sean más grandes o pequeños en general
         const BASE_PIXEL_SIZE = 21; 
         
         function calculateVisualDimensions() {
-            // Calcula cuántos píxeles de 16x16 caben en el ancho y alto del viewport
-            const visualCols = Math.floor(window.innerWidth / BASE_PIXEL_SIZE);
-            const visualRows = Math.floor(window.innerHeight / BASE_PIXEL_SIZE);
+            let currentPixelSize = BASE_PIXEL_SIZE;
+
+            // --- LÓGICA DE ZOOM OUT PARA MÓVILES (20:9 y 9:20 XIAOMI, ETC.) ---
+            const aspectRatio = window.innerHeight / window.innerWidth;
+            
+            // CASO 1: VERTICAL ESTRECHO (Ratio > 2.0, ej: 20:9 en vertical)
+            // Problema: Falta ancho. Solución: Reducir píxel hasta que quepan al menos 34 columnas.
+            if (aspectRatio > 2.0) {
+                const zoomOutPixelSize = Math.floor(window.innerWidth / 34);
+                
+                if (zoomOutPixelSize < BASE_PIXEL_SIZE) {
+                    currentPixelSize = zoomOutPixelSize;
+                }
+            }
+            // CASO 2: HORIZONTAL ESTRECHO (Ratio < 0.5, ej: 20:9 en horizontal)
+            // Problema: Falta altura. Solución: Reducir píxel hasta que quepan al menos 34 filas.
+            else if (aspectRatio < 0.5) {
+                const zoomOutPixelSize = Math.floor(window.innerHeight / 34);
+                
+                if (zoomOutPixelSize < BASE_PIXEL_SIZE) {
+                    currentPixelSize = zoomOutPixelSize;
+                }
+            }
+
+            // Calcula cuántos píxeles caben en el ancho y alto del viewport usando el tamaño ajustado
+            const visualCols = Math.floor(window.innerWidth / currentPixelSize);
+            const visualRows = Math.floor(window.innerHeight / currentPixelSize);
 
             // 1. Actualiza las variables CSS (grid-template)
             document.documentElement.style.setProperty('--grid-cols', visualCols);
