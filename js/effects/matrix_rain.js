@@ -14,8 +14,8 @@ function matrix_rain(matrix) {
 
     // Color verde base (asegúrate de tener .green en tu CSS)
     // Si no tienes .green, usa Config.ON_COLOR_CLASS
-    const COLOR_HEAD = 'on';   // Cabeza blanca/brillante
-    const COLOR_TRAIL = 'system'; // Cola verde
+    const COLOR_HEAD = 'on';   
+    const COLOR_TRAIL = 'system'; 
 
     for (let i = 0; i < COLS; i++) {
         // Posición actual de la gota (cabeza)
@@ -54,4 +54,4 @@ function matrix_rain(matrix) {
     return matrix;
 }
 
-registerEffect('matrix_rain', matrix_rain);
+registerEffect('matrix_rain', matrix_rain);a

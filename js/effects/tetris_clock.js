@@ -103,7 +103,7 @@ function drawClock(matrix) {
         const lines = [hours, minutes, dayName, dayNum];
         const colors = [ON_COLOR_CLASS, ON_COLOR_CLASS, 'on', 'on'];
         
-        const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 1) * LINE_SPACING);
+        const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 0) * LINE_SPACING);
         let currentY = Math.floor((ROWS - totalContentHeight) / 2) + 1;
         
         lines.forEach((lineText, index) => {

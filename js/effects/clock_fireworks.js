@@ -57,12 +57,12 @@ function drawText(matrix, text, startX, startY, colorClass, showColon = true) {
 // ==========================================
 // CONFIGURACIÓN Y CLASES DE FUEGOS ARTIFICIALES
 // ==========================================
-const FW_COLORS = ['yellow','red','blue','green','orange','purple','pink','white'];
-const NUM_PARTICLES = 50; 
+const FW_COLORS = ['yellow','red','blue','green','orange','purple','pink','white','system'];
+const NUM_PARTICLES = 10; 
 const ASCENT_SPEED = 0.2; 
 const EXPLOSION_FACTOR = 4; 
 const MAX_HEIGHT_FACTOR = 0.5; 
-const IGNITION_RATE = 40; 
+const IGNITION_RATE = 30; 
 
 // Estado persistente de los fuegos artificiales
 let activeFireworks = []; 
@@ -175,7 +175,7 @@ function clock_fireworks(matrix) {
     if (ROWS > COLS) {
         const lines = [hours, minutes, dayName, dayNum];
         const colors = [ON_COLOR_CLASS, ON_COLOR_CLASS, 'system', 'system'];
-        const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 1) * LINE_SPACING);
+        const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 0) * LINE_SPACING);
         let currentY = Math.floor((ROWS - totalContentHeight) / 2) + 1; 
         const offsetX = 1; 
 

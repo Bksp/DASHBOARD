@@ -87,7 +87,7 @@ function digital_clock(matrix) {
         const colors = [ON_COLOR_CLASS, ON_COLOR_CLASS, 'system', 'system'];
 
         // Calcular altura total del bloque para centrarlo verticalmente
-        const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 1) * LINE_SPACING);
+        const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 0) * LINE_SPACING);
         
         // Calcular el punto de inicio para centrar
         let currentY = Math.floor((ROWS - totalContentHeight) / 2);

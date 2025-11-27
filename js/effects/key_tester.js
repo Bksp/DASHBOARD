@@ -41,29 +41,14 @@ function key_tester(matrix) {
     // DETECCIÓN DE MODO VERTICAL
     const isVertical = ROWS > COLS;
 
-    // --- CONFIGURACIONES DE MODO ---
-    let offsetX = 0; // Desplazamiento horizontal inicial (desde el borde izquierdo)
-    let offsetY = 0; // Desplazamiento vertical inicial (desde el borde superior)
-    let availableCols = COLS;
-    let availableRows = ROWS;
+    // --- CONFIGURACIÓN DE DESPLAZAMIENTOS SOLICITADOS ---
+    // 1. Título "KEYS" -> 1 px a la derecha
+    const OFFSET_X_TITLE = 1;
+    // 2. Teclas pulsadas -> 2 px a la derecha
+    const OFFSET_X_KEYS = 2;
     
-    if (isVertical) { // MODO 32x64
-        // Dejar 1 píxel de margen izquierdo y desplazar 4px hacia abajo.
-        offsetX = 1; 
-        offsetY = 4;
-        
-        // El área disponible se reduce por los offsets
-        availableCols = COLS - offsetX;
-        availableRows = ROWS - offsetY;
-        
-    } else { // MODO 32x32 y 64x32
-        // Dejar 1 píxel de margen izquierdo
-        offsetX = 1; 
-        offsetY = 0; 
-        
-        availableCols = COLS - offsetX;
-        availableRows = ROWS - offsetY;
-    }
+    // Ajuste Vertical (Solo en modo vertical baja 4px)
+    const OFFSET_Y = isVertical ? 4 : 0;
 
     // 1. Limpiar teclas caducadas
     while (KeyInput.KEY_QUEUE.length > 0 && 
@@ -73,19 +58,29 @@ function key_tester(matrix) {
     
     const queue = KeyInput.KEY_QUEUE;
     
-    // --- CÁLCULO DE CAPACIDAD REAL ---
-    // Usamos el área disponible después de los offsets
-    const MAX_CHARS_PER_ROW = Math.floor(availableCols / CHAR_SPACING);
-    const MAX_ROWS = Math.floor(availableRows / LINE_HEIGHT_TOTAL);
+    // --- CÁLCULO DE DIMENSIONES ---
+    // Espacio disponible restando el desplazamiento de las teclas
+    const AVAILABLE_COLS = COLS - OFFSET_X_KEYS;
+    
+    // Recalcular cuántos caben
+    const MAX_CHARS_PER_ROW = Math.floor(AVAILABLE_COLS / CHAR_SPACING);
+    
+    // Ajuste de filas para modo vertical
+    let MAX_ROWS = Math.floor(ROWS / LINE_HEIGHT_TOTAL);
+    if (isVertical) {
+        // Reducimos filas para compensar el desplazamiento vertical
+        MAX_ROWS -= 1; 
+    }
+
     const MAX_DISPLAYABLE_CHARS = MAX_CHARS_PER_ROW * MAX_ROWS;
     
-    // 2. Estado inactivo
+    // 2. ESTADO INACTIVO (Mostrar Título)
     if (queue.length === 0 || MAX_CHARS_PER_ROW <= 0 || MAX_ROWS <= 0) {
         const message = 'KEYS';
         const messageWidth = message.length * CHAR_SPACING - LETTER_SPACING; 
         
-        // Centrado: se centra en el área total, no en el área disponible
-        const startX = Math.floor((COLS - messageWidth) / 2);
+        // Centrado base + Desplazamiento solicitado (+1)
+        const startX = Math.floor((COLS - messageWidth) / 2) + OFFSET_X_TITLE;
         const startY = Math.floor((ROWS - SPRITE_HEIGHT) / 2);
 
         let currentX = startX;
@@ -96,7 +91,7 @@ function key_tester(matrix) {
         return matrix;
     }
 
-    // 3. Renderizado (Relleno de Títulos)
+    // 3. RENDERIZADO DE TECLAS
     const sliceLength = Math.min(queue.length, MAX_DISPLAYABLE_CHARS);
     const displayQueue = queue.slice(-sliceLength).reverse();
     
@@ -104,16 +99,18 @@ function key_tester(matrix) {
         const r_index = Math.floor(i / MAX_CHARS_PER_ROW);
         const c_index = i % MAX_CHARS_PER_ROW;
 
-        // Posiciones de inicio basadas en el índice, más el offset de modo
-        const startY = offsetY + r_index * LINE_HEIGHT_TOTAL;
-        const startX = offsetX + c_index * CHAR_SPACING; 
+        // Posición Y con el offset vertical si corresponde
+        const startY = OFFSET_Y + r_index * LINE_HEIGHT_TOTAL;
+        
+        // Posición X con el offset de teclas solicitado (+2)
+        const startX = OFFSET_X_KEYS + c_index * CHAR_SPACING; 
 
-        // Restricción horizontal de seguridad (ya cubierta por MAX_CHARS_PER_ROW, pero mejor dejar)
+        // Restricción de seguridad
         if (startX + SPRITE_WIDTH > COLS) {
              return; 
         }
         
-        // Colores
+        // Colores con atenuación
         const age = now - item.timestamp;
         const decayFactor = 1 - (age / KEY_DISPLAY_DURATION); 
 

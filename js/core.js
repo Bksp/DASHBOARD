@@ -55,19 +55,20 @@ export function switchEffect(effectName) {
 // --- LISTA MAESTRA DE EFECTOS ---
 // Orden solicitado por el usuario
 const EFFECTS_NAME_LIST_MASTER = [
-    //'clock_fireworks',   
     'digital_clock',
-    // 'donation_qr',
+    'tetris_clock',
+    'clock_fireworks',   
+    ///'donation_qr',
     'color_plasma', 
     'expanding_circle', 
     'fireworks',
-    // 'key_tester', 
-    // 'led_tracker',
-    // 'matrix_rain',
-    // 'scrolling_marquee',
-    // 'spectrum_analyzer',
-    'tetris_clock',
-
+    'key_tester', 
+    'led_tracker',
+    ///'matrix_rain',
+    ///'scrolling_marquee',
+    ///'spectrum_analyzer',
+    'arkanoid',
+    'space_invaders',
 ];
 
 let currentEffectName = EFFECTS_NAME_LIST_MASTER[0]; 
@@ -85,6 +86,15 @@ export function registerEffect(name, func) {
 
 // --- FUNCIÓN PRINCIPAL: DETECTAR Y ASIGNAR DIMENSIONES ---
 export function detectAndSetDimensions(visualCols, visualRows) {
+    // *** LÓGICA DE PARIDAD FORZADA ***
+    // Si el número de columnas calculado es impar, restamos 1 para asegurar paridad.
+    // Esto garantiza que el centro sea exacto y los márgenes simétricos.
+    if (visualCols % 2 !== 0) {
+        visualCols -= 1;
+    }
+    // (Opcional) Lo mismo para filas si quieres simetría vertical perfecta
+    // if (visualRows % 2 !== 0) visualRows -= 1;
+
     COLS = visualCols;
     ROWS = visualRows;
     const aspectRatio = COLS / ROWS;
@@ -101,6 +111,13 @@ export function detectAndSetDimensions(visualCols, visualRows) {
     OFFSET_Y = Math.floor((ROWS - LOGICAL_ROWS) / 2);
 
     const grid = document.getElementById('pixel-grid');
+    // Actualizar CSS para reflejar la paridad forzada
+    if (grid) {
+        document.documentElement.style.setProperty('--grid-cols', COLS);
+        // Si no forzaste paridad en filas, usa visualRows original o ROWS
+        // document.documentElement.style.setProperty('--grid-rows', ROWS); 
+    }
+
     if (grid && grid.children.length !== (COLS * ROWS)) {
         initializeDisplay();
     }
