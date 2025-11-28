@@ -4,7 +4,7 @@ import { registerEffect, Config } from '../core.js';
 // Estado persistente de las gotas
 let drops = [];
 
-function matrix_rain(matrix) {
+function matrix_rain(matrix, frameCount, Shared) {
     const { COLS, ROWS } = Config;
 
     // Inicializar gotas si cambia el tamaño o es la primera vez
@@ -12,10 +12,9 @@ function matrix_rain(matrix) {
         drops = new Array(COLS).fill(0).map(() => Math.random() * ROWS * -1);
     }
 
-    // Color verde base (asegúrate de tener .green en tu CSS)
-    // Si no tienes .green, usa Config.ON_COLOR_CLASS
-    const COLOR_HEAD = 'on';   
-    const COLOR_TRAIL = 'system'; 
+    // Usamos colores compartidos si están disponibles, o fallbacks
+    const COLOR_HEAD = Shared?.Colors?.ON || 'on';
+    const COLOR_TRAIL = Shared?.Colors?.SYSTEM || 'system';
 
     for (let i = 0; i < COLS; i++) {
         // Posición actual de la gota (cabeza)
@@ -27,13 +26,13 @@ function matrix_rain(matrix) {
 
         for (let k = 0; k < trailLength; k++) {
             const trailRow = headRow - k;
-            
+
             // Si el píxel está dentro de la pantalla
             if (trailRow >= 0 && trailRow < ROWS) {
                 if (k === 0) {
                     // La cabeza es blanca (más brillante)
                     matrix[trailRow][i] = COLOR_HEAD;
-                } else if (Math.random() > 0.1) { 
+                } else if (Math.random() > 0.1) {
                     // La cola es verde (con un poco de parpadeo)
                     matrix[trailRow][i] = COLOR_TRAIL;
                 }
@@ -54,4 +53,4 @@ function matrix_rain(matrix) {
     return matrix;
 }
 
-registerEffect('matrix_rain', matrix_rain);a
+registerEffect('matrix_rain', matrix_rain); a
