@@ -1,9 +1,9 @@
-// js/core.js - Motor Central Optimizado (v9.0 - Resource Saver Edition)
+// js/core.js - Motor Central Optimizado (v9.1 - Pong Ready)
 
 // --- CONFIGURACIÓN DE RENDIMIENTO ---
 const TARGET_FPS = 30;
-const IDLE_FPS = 1; // FPS cuando está inactivo
-const IDLE_TIMEOUT = 5000; // 5 segundos para entrar en modo inactivo
+const IDLE_FPS = 1;
+const IDLE_TIMEOUT = 5000;
 const FRAME_INTERVAL = 1000 / TARGET_FPS;
 const IDLE_FRAME_INTERVAL = 1000 / IDLE_FPS;
 
@@ -24,16 +24,15 @@ const NOISE_CLASS = 'bg-noise';
 const ON_COLOR_CLASS = 'on';
 
 // --- VARIABLES DE OPTIMIZACIÓN (CACHE) ---
-let pixelDOMCache = [];     // Referencias directas a los DIVs
-let logicalGridBuffer = []; // Matriz reutilizable en memoria
-let cachedGridRect = null;  // Posición del grid para el mouse
+let pixelDOMCache = [];
+let logicalGridBuffer = [];
+let cachedGridRect = null;
 let animationFrameCount = 0;
 
-// --- GESTIÓN DE EFECTOS (DESACOPLADO) ---
+// --- GESTIÓN DE EFECTOS ---
 export const EFFECTS = {};
 const EFFECTS_LIST = [];
 let currentEffectName = null;
-let currentEffectInstance = null; // Para almacenar estado del efecto si es un objeto
 
 // --- RECURSOS COMPARTIDOS (SHARED) ---
 export const Shared = {
@@ -56,6 +55,7 @@ export const Shared = {
 
 // --- INPUTS ---
 const KEY_QUEUE = [];
+const KEYS_PRESSED = new Set(); // Estado continuo
 const MAX_KEY_HISTORY = 300;
 let mousePosition = { c: -1, r: -1 };
 
@@ -123,7 +123,7 @@ export function switchEffect(effectName) {
     }
 
     console.log(`🔀 Cambio a: ${effectName}`);
-    resetIdleTimer(); // Despertar al cambiar efecto
+    resetIdleTimer();
 }
 
 export function cycleEffect() {
@@ -199,7 +199,7 @@ function updateGridRect() {
 }
 
 function handleMouseMove(e) {
-    resetIdleTimer(); // Actividad detectada
+    resetIdleTimer();
     if (!cachedGridRect) updateGridRect();
     if (!cachedGridRect) return;
 
@@ -214,10 +214,19 @@ function handleMouseMove(e) {
 }
 
 function handleKeyDown(e) {
-    resetIdleTimer(); // Actividad detectada
+    resetIdleTimer();
     if (e.repeat || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
-    KEY_QUEUE.push({ key: e.key.toUpperCase(), timestamp: Date.now() });
+
+    const key = e.key.toUpperCase();
+    KEY_QUEUE.push({ key: key, timestamp: Date.now() });
     if (KEY_QUEUE.length > MAX_KEY_HISTORY) KEY_QUEUE.shift();
+
+    KEYS_PRESSED.add(key);
+}
+
+function handleKeyUp(e) {
+    const key = e.key.toUpperCase();
+    KEYS_PRESSED.delete(key);
 }
 
 function toggleFullscreen() {
@@ -288,6 +297,7 @@ export function initializeDisplay() {
     }, { passive: true });
 
     document.onkeydown = handleKeyDown;
+    document.onkeyup = handleKeyUp;
     window.onresize = updateGridRect;
     window.onscroll = updateGridRect;
 
@@ -332,7 +342,6 @@ function mainLoop(currentTime) {
             Config.COLS = LOGICAL_COLS;
             Config.ROWS = LOGICAL_ROWS;
 
-            // Soporte para ambos tipos de efectos: Función pura o Objeto con update()
             let result;
             if (typeof effectModule === 'function') {
                 result = effectModule(logicalGridBuffer, animationFrameCount, Shared);
@@ -350,7 +359,6 @@ function mainLoop(currentTime) {
     applyVisualMapping(dataToRender);
     animationFrameCount++;
 }
-
 
 // ==========================================
 // 5. RENDERIZADO
@@ -384,5 +392,5 @@ function applyVisualMapping(logicalData) {
 }
 
 export const Config = { COLS: LOGICAL_COLS, ROWS: LOGICAL_ROWS, NOISE_CLASS, ON_COLOR_CLASS };
-export const KeyInput = { KEY_QUEUE };
+export const KeyInput = { KEY_QUEUE, KEYS_PRESSED };
 export const MouseInput = { position: mousePosition };

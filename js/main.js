@@ -61,6 +61,7 @@ async function initApp() {
         './effects/arkanoid.js',
         './effects/space_invaders.js',
         './effects/matrix_rain.js',
+        './effects/pong.js',
         './effects/color_plasma.js'
     ];
 

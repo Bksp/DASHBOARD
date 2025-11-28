@@ -2,20 +2,21 @@
 
 :root {
     /* --- Variables del Grid (Se actualizan por JS) --- */
-    --grid-cols: 32; 
+    --grid-cols: 32;
     --grid-rows: 32;
-    
+
     /* --- Paleta Base --- */
     --bg-color: #000000;
     --pixel-color-off: #000000;
     --pixel-color-noise: #0f0f0f;
     --pixel-color-on: #ffffff;
-    
+
     --neon-green: #00ff41;
-    --color-indicator: #ffffffc9; /* Color del Glow inferior */
-    
+    --color-indicator: #ffffffc9;
+    /* Color del Glow inferior */
+
     /* --- Tipografía --- */
-    --font-mono: 'doto', monospace; 
+    --font-mono: 'doto', monospace;
 }
 
 /* --- BASE --- */
@@ -28,20 +29,21 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 /* --- WRAPPER PRINCIPAL --- */
 .display-wrapper {
-    background-color: var(--pixel-color-off); 
-    width: 100vw; 
-    height: 100vh; 
-    
+    background-color: var(--pixel-color-off);
+    width: 100vw;
+    height: 100vh;
+
     /* CURSOR VISIBLE (Arreglado) */
-    cursor: default; 
-    
+    cursor: default;
+
     position: relative;
-    z-index: 2; /* Por encima del glow de fondo */
+    z-index: 2;
+    /* Por encima del glow de fondo */
 }
 
 /* --- GRID DE PÍXELES --- */
@@ -52,59 +54,102 @@ body {
     grid-template-rows: repeat(var(--grid-rows), 1fr);
     width: 100%;
     height: 100%;
-    background-color: var(--pixel-color-off); 
-    gap: 1px; /* Líneas del grid */
+    background-color: var(--pixel-color-off);
+    gap: 1px;
+    /* Líneas del grid */
 }
 
 /* --- CÉLULA INDIVIDUAL (PÍXEL) --- */
 .pixel {
-    background-color: var(--pixel-color-noise); 
-    border: none; 
-    border-radius: 1px; 
-    transition: background-color 0.1s ease-out; 
+    background-color: var(--pixel-color-noise);
+    border: none;
+    border-radius: 1px;
+    transition: background-color 0.1s ease-out;
 }
 
 /* --- COLORES Y EFECTOS (Movidos desde el HTML) --- */
-.bg-noise { background-color: var(--pixel-color-noise); }
-.on { background-color: var(--pixel-color-on); box-shadow: 0 0 5px rgba(200, 200, 200, 0.7); } 
+.bg-noise {
+    background-color: var(--pixel-color-noise);
+}
+
+.on {
+    background-color: var(--pixel-color-on);
+    box-shadow: 0 0 5px rgba(200, 200, 200, 0.7);
+}
 
 /* Colores Neón / Cyberpunk */
-.red    { background-color: #ff003cb9; box-shadow: 0 0 8px rgba(255, 0, 60, 0.7); }
-.orange { background-color: #ff5e00b9; box-shadow: 0 0 8px rgba(255, 94, 0, 0.7); }
-.yellow { background-color: #ffde00b9; box-shadow: 0 0 8px rgba(255, 222, 0, 0.7); }
-.green  { background-color: #39ff14b9; box-shadow: 0 0 8px rgba(57, 255, 20, 0.7); }
-.blue   { background-color: #00f3ffb9; box-shadow: 0 0 8px rgba(0, 243, 255, 0.7); }
-.purple { background-color: #b026ffb9; box-shadow: 0 0 8px rgba(176, 38, 255, 0.7); }
-.system { background-color: #969696b9; box-shadow: 0 0 5px #303030b9; }
+.red {
+    background-color: #ff003cb9;
+    box-shadow: 0 0 8px rgba(255, 0, 60, 0.7);
+}
 
-.purple-glow { 
-    background-color: rgba(176, 38, 255, 0.25); 
-    box-shadow: 0 0 15px 4px rgba(176, 38, 255, 0.65); 
+.orange {
+    background-color: #ff5e00b9;
+    box-shadow: 0 0 8px rgba(255, 94, 0, 0.7);
+}
+
+.yellow {
+    background-color: #ffde00b9;
+    box-shadow: 0 0 8px rgba(255, 222, 0, 0.7);
+}
+
+.green {
+    background-color: #39ff14b9;
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
+}
+
+.blue {
+    background-color: #00f3ffb9;
+    box-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
+}
+
+.purple {
+    background-color: #b026ffb9;
+    box-shadow: 0 0 8px rgba(176, 38, 255, 0.7);
+}
+
+.system {
+    background-color: #969696b9;
+    box-shadow: 0 0 5px #303030b9;
+}
+
+.purple-glow {
+    background-color: rgba(176, 38, 255, 0.25);
+    box-shadow: 0 0 15px 4px rgba(176, 38, 255, 0.65);
     z-index: 0;
 }
 
 /* --- NOTHING STYLE GLOW (Fondo decorativo) --- */
 #floating-indicator {
     position: fixed;
-    width: 270vw;  
-    height: 130vw;  
-    bottom: -130.4vw; 
+    width: 270vw;
+    height: 130vw;
+    bottom: -130.4vw;
     left: 50%;
-    transform: translateX(-50%); /* Centrado horizontal corregido */
-    
+    transform: translateX(-50%);
+    /* Centrado horizontal corregido */
+
     background-color: var(--color-indicator);
-    border-radius: 100%; 
-    box-shadow: 0 0 130px var(--color-indicator); 
-    opacity: 0.8; 
-    z-index: 1; 
-    
+    border-radius: 100%;
+    box-shadow: 0 0 130px var(--color-indicator);
+    opacity: 0.8;
+    z-index: 1;
+
     animation: pulse-float 4s ease-in-out infinite alternate;
-    pointer-events: none; /* Para que no bloquee clicks */
+    pointer-events: none;
+    /* Para que no bloquee clicks */
 }
 
 @keyframes pulse-float {
-    from { transform: translateX(-50%) translateY(0); opacity: 0.85; }
-    to { transform: translateX(-50%) translateY(-10px); opacity: 0.95; }
+    from {
+        transform: translateX(-50%) translateY(0);
+        opacity: 0.85;
+    }
+
+    to {
+        transform: translateX(-50%) translateY(-10px);
+        opacity: 0.95;
+    }
 }
 
 /* --- UTILIDADES TEXTO --- */
@@ -114,6 +159,7 @@ body {
     line-height: 1;
     letter-spacing: -5px;
 }
+
 .date-text {
     font-size: 1.5rem;
     letter-spacing: 2px;
