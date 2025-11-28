@@ -1,5 +1,7 @@
 # DASHBOARD - Pixel Display
 
+https://bksp.github.io/DASHBOARD/pixels.html
+
 Un sistema de visualización de píxeles interactivo y optimizado, diseñado para ser ligero y estéticamente agradable. Incluye varios efectos visuales y un minijuego de Pong totalmente funcional.
 
 ## 🚀 Cómo Usar
