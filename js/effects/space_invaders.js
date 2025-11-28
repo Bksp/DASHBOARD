@@ -2,9 +2,9 @@ import { registerEffect, Config, KeyInput, MouseInput } from '../core.js';
 
 // --- CONFIGURACIÓN ---
 const PLAYER_COLOR = 'on';
-const BULLET_COLOR = 'on';
+const BULLET_COLOR = 'red';
 const ENEMY_COLOR_1 = 'red';
-const ENEMY_COLOR_2 = 'purple';
+const ENEMY_COLOR_2 = 'on'; 
 
 const PLAYER_SPEED = 1.0;
 const BULLET_SPEED = 0.5;
@@ -70,18 +70,16 @@ function updateGame(COLS, ROWS) {
 
     // 1. MOVER JUGADOR
     // Mouse (Prioridad)
-    if (MouseInput && MouseInput.position && MouseInput.position.c >= 0) {
-        playerX = MouseInput.position.c;
-    } 
+ 
     // Teclado
-    else {
+     {
         const keys = KeyInput.KEY_QUEUE.splice(0, KeyInput.KEY_QUEUE.length);
         keys.forEach(k => {
             if (k.key === 'ARROWLEFT') playerX -= 1;
             if (k.key === 'ARROWRIGHT') playerX += 1;
             if (k.key === ' ' || k.key === 'ARROWUP') {
                 // Disparar (con cooldown simple)
-                if (now - lastFireTime > 300) {
+                if (now - lastFireTime > 100) {
                     bullets.push({ x: Math.floor(playerX), y: ROWS - 2, active: true });
                     lastFireTime = now;
                 }

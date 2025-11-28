@@ -2,8 +2,8 @@ import { registerEffect, Config, KeyInput } from '../core.js';
 
 // --- CONFIGURACIÓN DEL JUEGO ---
 const PADDLE_WIDTH_BASE = 5;
-const PADDLE_COLOR = 'on'; // Blanco
-const BALL_COLOR = 'on'; // Blanco
+const PADDLE_COLOR = 'system'; // Blanco
+const BALL_COLOR = 'red'; // Blanco
 const BG_COLOR = Config.NOISE_CLASS;
 
 // Velocidades (Ajustadas para ser más lentas)
@@ -13,7 +13,7 @@ const BALL_SPEED_BASE = 0.15; // Antes 0.25
 const POWERUP_SPEED = 0.1;
 
 // Colores de los ladrillos por fila
-const BRICK_COLORS = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
+const BRICK_COLORS = ['on'];
 
 // --- ESTADO DEL JUEGO ---
 let paddle = { x: 0, width: PADDLE_WIDTH_BASE };
@@ -274,7 +274,7 @@ function arkanoid(matrix, frameCount) {
             // Lógica de visualización de vidas en la barra
             // Si la pelota está cargada, los primeros N píxeles de la barra son verdes
             if (isBallStuck && i < lives) {
-                color = 'green';
+                color = 'on';
             }
             
             matrix[ROWS - 1][px] = color;
@@ -302,7 +302,7 @@ function arkanoid(matrix, frameCount) {
         const px = Math.floor(p.x);
         const py = Math.floor(p.y);
         if (px >= 0 && px < COLS && py >= 0 && py < ROWS) {
-            matrix[py][px] = (frameCount % 8 < 4) ? 'purple' : 'on'; // Parpadeo lento
+            matrix[py][px] = (frameCount % 8 < 4) ? 'system' : 'on'; // Parpadeo lento
         }
     });
 
