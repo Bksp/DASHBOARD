@@ -1,4 +1,4 @@
-```javascript
+javascript
 // js/effects/matrix_rain.js
 import { registerEffect, Config } from '../core.js';
 
@@ -25,8 +25,8 @@ const MatrixRain = {
             drops = new Array(COLS).fill(0).map(() => Math.random() * ROWS * -1);
         }
 
-        const COLOR_HEAD = Shared?.Colors?.ON || 'on';   
-        const COLOR_TRAIL = Shared?.Colors?.SYSTEM || 'system'; 
+        const COLOR_HEAD = Shared?.Colors?.ON || 'on';
+        const COLOR_TRAIL = Shared?.Colors?.SYSTEM || 'system';
 
         for (let i = 0; i < COLS; i++) {
             const headRow = Math.floor(drops[i]);
@@ -34,11 +34,11 @@ const MatrixRain = {
 
             for (let k = 0; k < trailLength; k++) {
                 const trailRow = headRow - k;
-                
+
                 if (trailRow >= 0 && trailRow < ROWS) {
                     if (k === 0) {
                         matrix[trailRow][i] = COLOR_HEAD;
-                    } else if (Math.random() > 0.1) { 
+                    } else if (Math.random() > 0.1) {
                         matrix[trailRow][i] = COLOR_TRAIL;
                     }
                 }
@@ -56,4 +56,3 @@ const MatrixRain = {
 };
 
 registerEffect('matrix_rain', MatrixRain); a
-```
