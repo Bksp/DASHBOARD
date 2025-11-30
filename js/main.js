@@ -54,14 +54,14 @@ async function initApp() {
         './effects/led_tracker.js',
         './effects/scrolling_marquee.js',
         './effects/spectrum_analyzer.js',
-        './effects/fireworks.js',
+        //'./effects/fireworks.js',
         './effects/clock_fireworks.js',
         './effects/tetris_clock.js',
-        './effects/donation_qr.js',
-        './effects/arkanoid.js',
-        './effects/space_invaders.js',
-        './effects/matrix_rain.js',
-        './effects/pong.js',
+        //'./effects/donation_qr.js',
+        //'./effects/arkanoid.js',
+        //'./effects/space_invaders.js',
+        //'./effects/matrix_rain.js',
+        //'./effects/pong.js',
         './effects/color_plasma.js'
     ];
 
