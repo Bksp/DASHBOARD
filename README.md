@@ -1,4 +1,5 @@
 # DASHBOARD - Pixel Display
+ ![](.img/mockup.png)
 
 https://bksp.github.io/DASHBOARD/pixels.html
 
@@ -102,8 +103,6 @@ Estas aplicaciones están presentes en la carpeta `js/effects/` pero comentadas 
 - Crear Visor de Datos de PC
 - Crear Visor y Editor de Imágenes
 - Añadir a Sonic
----
-_Design by Bksp_
 
 ---
 
@@ -209,3 +208,9 @@ These applications are present in the `js/effects/` folder but commented out in 
 - Add to Sonic
 ---
 _Design by Bksp_
+
+<div align="center">
+
+![](.img/favicon.png)
+
+</div>
