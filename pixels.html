@@ -3,7 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Display by Bksp</title>
+    <title>Pixel Dashboard - Bksp</title>
+    <meta name="description" content="Pixel Dashboard: Un display interactivo de pixel art y efectos visuales retro, diseñado para la creatividad y el entretenimiento.">
+    
+    <!-- Open Graph (Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" content="Pixel Dashboard - Bksp">
+    <meta property="og:description" content="Display interactivo de pixel art y efectos visuales retro.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bksp.com.ar/dashboard">
+    <meta property="og:image" content="./img/icon-512.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pixel Dashboard - Bksp">
+    <meta name="twitter:description" content="Display interactivo de pixel art y efectos visuales retro.">
+    <meta name="twitter:image" content="./img/icon-512.png">
+
+    <!-- PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="./img/icon-192.png">
+    
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./service-worker.js')
+            .then(reg => console.log('Service Worker registrado:', reg))
+            .catch(err => console.error('Error al registrar Service Worker:', err));
+        });
+      }
+    </script>
     <link rel="icon" type="image/png" href="./img/favicon.png">
     <style>
         /* --- CONSTANTES DEL DISPLAY --- */

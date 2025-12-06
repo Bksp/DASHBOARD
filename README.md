@@ -98,6 +98,8 @@ Estas aplicaciones están presentes en la carpeta `js/effects/` pero comentadas 
 - Mejorar Space Invaders
 ---
 ### Funcionalidades
+- Transformar en una aplicacion Web
+- Mejorar SEO
 - Transformar en una API
 - Crear Sintetizador de sonido
 - Crear Visor de Datos de PC
