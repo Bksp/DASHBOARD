@@ -1,10 +1,10 @@
 {
-    "name": "Pixel Dashboard",
-    "short_name": "PixelDash",
+    "name": "Pixel Dashboard - Bksp",
+    "short_name": "Pixel Dashboard",
     "start_url": "./pixels.html",
     "display": "standalone",
-    "background_color": "#000000",
-    "theme_color": "#000000",
+    "background_color": "#0d0e10",
+    "theme_color": "#0d0e10",
     "orientation": "any",
     "icons": [
         {

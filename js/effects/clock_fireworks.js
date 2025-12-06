@@ -64,9 +64,11 @@ const EXPLOSION_FACTOR = 4;
 const MAX_HEIGHT_FACTOR = 0.5;
 const IGNITION_RATE = 30;
 
-// Estado persistente de los fuegos artificiales
-let activeFireworks = [];
-let ignitionTimer = 0;
+// Configuración de estado encapsulado
+let state = {
+    activeFireworks: [],
+    ignitionTimer: 0
+};
 
 class Particle {
     constructor(startX, startY, color, velocity) {
@@ -146,72 +148,87 @@ class Firework {
 }
 
 // ==========================================
-// FUNCIÓN PRINCIPAL COMBINADA
+// EFECTO (LIFECYCLE)
 // ==========================================
-function clock_fireworks(matrix) {
-    const { COLS, ROWS, ON_COLOR_CLASS } = Config;
 
-    // --- 1. CAPA DE FONDO: FUEGOS ARTIFICIALES ---
-    ignitionTimer++;
-    if (ignitionTimer >= IGNITION_RATE) {
-        activeFireworks.push(new Firework(COLS, ROWS));
-        ignitionTimer = 0;
+const ClockFireworksEffect = {
+    mount: (Shared) => {
+        state = {
+            activeFireworks: [],
+            ignitionTimer: 0
+        };
+    },
+
+    unmount: (Shared) => {
+        state.activeFireworks = [];
+        state.ignitionTimer = 0;
+    },
+
+    update: (matrix, globalFrameCount, Shared) => {
+        const { COLS, ROWS, ON_COLOR_CLASS } = Config;
+
+        // --- 1. CAPA DE FONDO: FUEGOS ARTIFICIALES ---
+        state.ignitionTimer++;
+        if (state.ignitionTimer >= IGNITION_RATE) {
+            state.activeFireworks.push(new Firework(COLS, ROWS));
+            state.ignitionTimer = 0;
+        }
+
+        // Actualizar y dibujar fuegos artificiales
+        state.activeFireworks = state.activeFireworks.filter(f => f.update());
+        state.activeFireworks.forEach(f => f.draw(matrix));
+
+
+        // --- 2. CAPA SUPERIOR: RELOJ DIGITAL ---
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const dayName = DAYS[now.getDay()];
+        const dayNum = String(now.getDate()).padStart(2, '0');
+        const showColon = now.getMilliseconds() < 500;
+
+        // Lógica Vertical
+        if (ROWS > COLS) {
+            const lines = [hours, minutes, dayName, dayNum];
+            const colors = [ON_COLOR_CLASS, ON_COLOR_CLASS, 'system', 'system'];
+            const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 0) * LINE_SPACING);
+            let currentY = Math.floor((ROWS - totalContentHeight) / 2) + 1;
+            const offsetX = 1;
+
+            lines.forEach((lineText, index) => {
+                const lineWidth = calculateTextWidth(lineText);
+                const startX = Math.floor((COLS - lineWidth) / 2) + offsetX;
+                const shouldShowColon = index === 0 || index === 1 ? showColon : true;
+                drawText(matrix, lineText, startX, currentY, colors[index], shouldShowColon);
+                currentY += SPRITE_HEIGHT + LINE_SPACING;
+            });
+
+        } else {
+            // Lógica Horizontal
+            const timeStr = `${hours}:${minutes}`;
+            const timeWidth = calculateTextWidth(timeStr);
+            const dayNameWidth = calculateTextWidth(dayName);
+            const totalContentHeight = SPRITE_HEIGHT + LINE_SPACING + SPRITE_HEIGHT;
+            const base_startY = Math.floor((ROWS - totalContentHeight) / 2);
+
+            const startY_Time = base_startY + 1;
+            const startY_Date = startY_Time + SPRITE_HEIGHT + LINE_SPACING;
+
+            const centerDateBlockX = Math.floor(COLS / 2);
+            const startX_Time = Math.floor((COLS - timeWidth) / 2);
+            const startX_DayName = centerDateBlockX - dayNameWidth - 4;
+            const startX_Dot = startX_DayName + dayNameWidth + LETTER_SPACING;
+            const startX_DayNum = centerDateBlockX + 3;
+
+            // Dibujamos el texto sobre los fuegos artificiales
+            drawText(matrix, timeStr, startX_Time, startY_Time, ON_COLOR_CLASS, showColon);
+            drawText(matrix, dayName, startX_DayName, startY_Date, 'system');
+            drawText(matrix, '.', startX_Dot, startY_Date, 'system', true);
+            drawText(matrix, dayNum, startX_DayNum, startY_Date, 'system');
+        }
+
+        return matrix;
     }
+};
 
-    // Actualizar y dibujar fuegos artificiales
-    activeFireworks = activeFireworks.filter(f => f.update());
-    activeFireworks.forEach(f => f.draw(matrix));
-
-
-    // --- 2. CAPA SUPERIOR: RELOJ DIGITAL ---
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const dayName = DAYS[now.getDay()];
-    const dayNum = String(now.getDate()).padStart(2, '0');
-    const showColon = now.getMilliseconds() < 500;
-
-    // Lógica Vertical
-    if (ROWS > COLS) {
-        const lines = [hours, minutes, dayName, dayNum];
-        const colors = [ON_COLOR_CLASS, ON_COLOR_CLASS, 'system', 'system'];
-        const totalContentHeight = (lines.length * SPRITE_HEIGHT) + ((lines.length - 0) * LINE_SPACING);
-        let currentY = Math.floor((ROWS - totalContentHeight) / 2) + 1;
-        const offsetX = 1;
-
-        lines.forEach((lineText, index) => {
-            const lineWidth = calculateTextWidth(lineText);
-            const startX = Math.floor((COLS - lineWidth) / 2) + offsetX;
-            const shouldShowColon = index === 0 || index === 1 ? showColon : true;
-            drawText(matrix, lineText, startX, currentY, colors[index], shouldShowColon);
-            currentY += SPRITE_HEIGHT + LINE_SPACING;
-        });
-
-    } else {
-        // Lógica Horizontal
-        const timeStr = `${hours}:${minutes}`;
-        const timeWidth = calculateTextWidth(timeStr);
-        const dayNameWidth = calculateTextWidth(dayName);
-        const totalContentHeight = SPRITE_HEIGHT + LINE_SPACING + SPRITE_HEIGHT;
-        const base_startY = Math.floor((ROWS - totalContentHeight) / 2);
-
-        const startY_Time = base_startY + 1;
-        const startY_Date = startY_Time + SPRITE_HEIGHT + LINE_SPACING;
-
-        const centerDateBlockX = Math.floor(COLS / 2);
-        const startX_Time = Math.floor((COLS - timeWidth) / 2);
-        const startX_DayName = centerDateBlockX - dayNameWidth - 4;
-        const startX_Dot = startX_DayName + dayNameWidth + LETTER_SPACING;
-        const startX_DayNum = centerDateBlockX + 3;
-
-        // Dibujamos el texto sobre los fuegos artificiales
-        drawText(matrix, timeStr, startX_Time, startY_Time, ON_COLOR_CLASS, showColon);
-        drawText(matrix, dayName, startX_DayName, startY_Date, 'system');
-        drawText(matrix, '.', startX_Dot, startY_Date, 'system', true);
-        drawText(matrix, dayNum, startX_DayNum, startY_Date, 'system');
-    }
-
-    return matrix;
-}
-
-registerEffect('clock_fireworks', clock_fireworks);
+registerEffect('clock_fireworks', ClockFireworksEffect);

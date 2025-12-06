@@ -8,9 +8,11 @@ const EXPLOSION_FACTOR = 4;
 const MAX_HEIGHT_FACTOR = 0.5;
 const IGNITION_RATE = 40;
 
-// --- ESTADO PERSISTENTE (Pools) ---
-let activeFireworks = [];
-let ignitionTimer = 0;
+// --- ESTADO PERSISTENTE (Encapsulado) ---
+let state = {
+    activeFireworks: [],
+    ignitionTimer: 0
+};
 
 // --- CLASE PARTICLE (Partículas de la explosión) ---
 class Particle {
@@ -115,13 +117,13 @@ class Firework {
 
 const FireworksEffect = {
     mount: (Shared) => {
-        activeFireworks = [];
-        ignitionTimer = 0;
-        // Pre-calentar pool si fuera necesario, por ahora dinámico
+        state.activeFireworks = [];
+        state.ignitionTimer = 0;
     },
 
     unmount: (Shared) => {
-        activeFireworks = []; // Liberar memoria inmediatamente
+        state.activeFireworks = []; // Liberar memoria inmediatamente
+        state.ignitionTimer = 0;
     },
 
     update: (matrix, frameCount, Shared) => {
@@ -129,18 +131,18 @@ const FireworksEffect = {
         const palette = [Shared.Colors.ON, Shared.Colors.SYSTEM, Shared.Colors.RED, Shared.Colors.YELLOW];
 
         // 1. GESTIONAR EL INICIO DE NUEVOS FUEGOS ARTIFICIALES
-        ignitionTimer++;
-        if (ignitionTimer >= IGNITION_RATE) {
+        state.ignitionTimer++;
+        if (state.ignitionTimer >= IGNITION_RATE) {
             const fw = new Firework(); // Podríamos usar pool aquí también
             fw.spawn(COLS, ROWS, palette);
-            activeFireworks.push(fw);
-            ignitionTimer = 0;
+            state.activeFireworks.push(fw);
+            state.ignitionTimer = 0;
         }
 
         // 2. ACTUALIZAR Y DIBUJAR
         // Filtrar inactivos para mantener el array pequeño
-        activeFireworks = activeFireworks.filter(f => f.update());
-        activeFireworks.forEach(f => f.draw(matrix));
+        state.activeFireworks = state.activeFireworks.filter(f => f.update());
+        state.activeFireworks.forEach(f => f.draw(matrix));
 
         return matrix;
     }

@@ -6,14 +6,14 @@
     <title>Pixel Dashboard - Bksp</title>
     <meta name="description" content="Pixel Dashboard: Un display interactivo de pixel art y efectos visuales retro, diseñado para la creatividad y el entretenimiento.">
     
-    <!-- Open Graph (Facebook, LinkedIn, etc.) -->
+    <!-- Open Graph -->
     <meta property="og:title" content="Pixel Dashboard - Bksp">
     <meta property="og:description" content="Display interactivo de pixel art y efectos visuales retro.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bksp.com.ar/dashboard">
     <meta property="og:image" content="./img/icon-512.png">
 
-    <!-- Twitter Card -->
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Pixel Dashboard - Bksp">
     <meta name="twitter:description" content="Display interactivo de pixel art y efectos visuales retro.">
@@ -23,103 +23,20 @@
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#000000">
     <link rel="apple-touch-icon" href="./img/icon-192.png">
-    
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./service-worker.js')
-            .then(reg => console.log('Service Worker registrado:', reg))
-            .catch(err => console.error('Error al registrar Service Worker:', err));
-        });
-      }
-    </script>
     <link rel="icon" type="image/png" href="./img/favicon.png">
-    <style>
-        /* --- CONSTANTES DEL DISPLAY --- */
-        :root {
-            --grid-cols: 32; /* Se actualiza por JS (Dimensión Visual) */
-            --grid-rows: 32; /* Se actualiza por JS (Dimensión Visual) */
-            --pixel-color-off: #000000; /* Color de fondo / Líneas del grid */
-            --pixel-color-noise: #0f0f0f; /* Color de la celda LED apagada */
-            --pixel-color-on: #ffffff;
-        }
 
-        /* --- ESTILOS BASE Y CUERPO --- */
-        body {
-            background-color: var(--pixel-color-off); 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden; 
-        }
-
-        /* --- CONTENEDOR DEL DISPLAY (Fuerza pantalla completa) --- */
-        .display-wrapper {
-            background-color: var(--pixel-color-off); 
-            cursor: default;
-            width: 100vw; /* Ocupa todo el ancho */
-            height: 100vh; /* Ocupa todo el alto */
-        }
-
-        .pixel-display {
-            display: grid;
-            /* El grid se dibuja según las dimensiones visuales que JS calcula */
-            grid-template-columns: repeat(var(--grid-cols), 1fr);
-            grid-template-rows: repeat(var(--grid-rows), 1fr);
-            width: 100%;
-            height: 100%;
-            
-            /* CAMBIO CLAVE: Usamos el color OFF para el fondo y GAP para las líneas */
-            background-color: var(--pixel-color-off); 
-            gap: 1px; /* Esta es la línea de separación entre LEDs (color del grid) */
-        }
-
-        /* --- ESTILOS DEL PIXEL (LED) --- */
-        .pixel {
-            box-sizing: border-box;
-            background-color: var(--pixel-color-noise); 
-            transition: background-color 0.1s ease-out; 
-            
-            /* Borde eliminado para usar gap como separador limpio */
-            border: none; 
-            border-radius: 1px; /* Opcional: suaviza ligeramente las esquinas del LED */
-        }
-
-        /* CLASES DE COLOR ADICIONALES (Necesarias para los efectos) */
-        .on { background-color: var(--pixel-color-on); box-shadow: 0 0 5px rgba(200, 200, 200, 0.7); } 
-        .bg-noise { background-color: var(--pixel-color-noise); }
-        
-        /* PALETA DE COLORES MEJORADA (ESTILO NEÓN/CYBER) */
-        .red    { background-color: #ff003cb9; box-shadow: 0 0 8px rgba(255, 0, 60, 0.7); }   /* Rojo Frambuesa Neón */
-        .orange { background-color: #ff5e00b9; box-shadow: 0 0 8px rgba(255, 94, 0, 0.7); }   /* Naranja Fuego */
-        .yellow { background-color: #ffde00b9; box-shadow: 0 0 8px rgba(255, 222, 0, 0.7); }  /* Amarillo Cyber */
-        .green  { background-color: #39ff14b9; box-shadow: 0 0 8px rgba(57, 255, 20, 0.7); }   /* Verde Tóxico */
-        .blue   { background-color: #00f3ffb9; box-shadow: 0 0 8px rgba(0, 243, 255, 0.7); }  /* Cian Eléctrico */
-        .purple { background-color: #b026ffb9; box-shadow: 0 0 8px rgba(176, 38, 255, 0.7); }  /* Violeta Intenso */
-        
-        /* Nueva clase system para textos secundarios */
-        .system { background-color: #969696b9; box-shadow: 0 0 5px #303030b9; }
-
-        /* --- NUEVO: RESPLANDOR ESTILO NOTHING (GLOW) --- */
-        .purple-glow { 
-            background-color: rgba(176, 38, 255, 0.25); 
-            box-shadow: 0 0 15px 4px rgba(176, 38, 255, 0.65); 
-            z-index: 0;
-        }
-    </style>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
     <div class="display-wrapper">
         <div id="pixel-grid" class="pixel-display">
-            </div>
+            <!-- Grid generated by JS -->
+        </div>
     </div>
 
-    <!-- LIBRERÍA QR EXTERNA (IMPRESCINDIBLE) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-    
-    <!-- Lógica Principal -->
+    <!-- Libs & Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" defer></script>
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

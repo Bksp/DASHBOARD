@@ -27,19 +27,19 @@ const SHAPES = {
 
 const SHAPE_KEYS = Object.keys(SHAPES);
 
-// --- ESTADO DEL JUEGO ---
-let grid = [];
-let bag = [];
-let currentPiece = null;
-let score = 0;
-let gameOver = false;
-let frameCounter = 0;
-
-// Variables de IA y Control
-let isUserControlling = false;
-let aiPath = [];
-let aiMoveIndex = 0;
-let lastUserActionTime = 0;
+// --- ESTADO DEL EFECTO (Encapsulado) ---
+let state = {
+    grid: [],
+    bag: [],
+    currentPiece: null,
+    score: 0,
+    gameOver: false,
+    frameCounter: 0,
+    isUserControlling: false,
+    aiPath: [],
+    aiMoveIndex: 0,
+    lastUserActionTime: 0
+};
 
 // --- UTILIDADES DE TEXTO ---
 function calculateTextWidth(text) {
@@ -95,9 +95,6 @@ function drawClock(matrix) {
     const dayNum = String(now.getDate()).padStart(2, '0');
     const showColon = now.getMilliseconds() < 500;
 
-    // Dibujamos DIRECTAMENTE con drawText, sin outlines ni cajas de fondo.
-    // Esto mezcla las letras con el contenido de atrás.
-
     if (ROWS > COLS) {
         // --- MODO VERTICAL ---
         const lines = [hours, minutes, dayName, dayNum];
@@ -146,18 +143,18 @@ function initGame() {
     const cols = Math.floor(Config.COLS / BLOCK_SIZE);
     const rows = Math.floor(Config.ROWS / BLOCK_SIZE);
 
-    grid = Array(rows).fill().map(() => Array(cols).fill(null));
-    bag = [];
+    state.grid = Array(rows).fill().map(() => Array(cols).fill(null));
+    state.bag = [];
     spawnPiece();
-    gameOver = false;
+    state.gameOver = false;
 }
 
 function getPiece() {
-    if (bag.length === 0) {
-        bag = [...SHAPE_KEYS, ...SHAPE_KEYS];
-        bag.sort(() => Math.random() - 0.5);
+    if (state.bag.length === 0) {
+        state.bag = [...SHAPE_KEYS, ...SHAPE_KEYS];
+        state.bag.sort(() => Math.random() - 0.5);
     }
-    const type = bag.pop();
+    const type = state.bag.pop();
     return {
         type: type,
         matrix: SHAPES[type].blocks,
@@ -207,39 +204,41 @@ function merge(arena, player) {
 
 function arenaSweep() {
     let rowCount = 1;
-    outer: for (let y = grid.length - 1; y > 0; --y) {
-        for (let x = 0; x < grid[y].length; ++x) {
-            if (grid[y][x] === null) {
+    outer: for (let y = state.grid.length - 1; y > 0; --y) {
+        for (let x = 0; x < state.grid[y].length; ++x) {
+            if (state.grid[y][x] === null) {
                 continue outer;
             }
         }
-        const row = grid.splice(y, 1)[0].fill(null);
-        grid.unshift(row);
+        const row = state.grid.splice(y, 1)[0].fill(null);
+        state.grid.unshift(row);
         ++y;
-        score += rowCount * 10;
+        state.score += rowCount * 10;
         rowCount *= 2;
     }
 }
 
 // --- INTELIGENCIA ARTIFICIAL (IA) ---
 function calculateBestMove() {
-    const moves = [];
-    const boardWidth = grid[0].length;
+    if (!state.currentPiece) return null;
 
-    let testPiece = JSON.parse(JSON.stringify(currentPiece));
+    const moves = [];
+    const boardWidth = state.grid[0].length;
+
+    let testPiece = JSON.parse(JSON.stringify(state.currentPiece));
 
     for (let r = 0; r < 4; r++) {
         for (let x = -2; x < boardWidth; x++) {
             testPiece.x = x;
             testPiece.y = 0;
 
-            if (!collide(grid, testPiece)) {
-                while (!collide(grid, testPiece)) {
+            if (!collide(state.grid, testPiece)) {
+                while (!collide(state.grid, testPiece)) {
                     testPiece.y++;
                 }
                 testPiece.y--;
 
-                const score = evaluateBoardState(grid, testPiece);
+                const score = evaluateBoardState(state.grid, testPiece);
                 moves.push({
                     x: x,
                     rotation: r,
@@ -310,8 +309,8 @@ function generateAIPath(bestMove) {
         path.push('ROTATE');
     }
 
-    const currentX = Math.floor((grid[0].length / 2)) - Math.floor(currentPiece.matrix[0].length / 2);
-    let deltaX = bestMove.x - currentPiece.x;
+    const currentX = Math.floor((state.grid[0].length / 2)) - Math.floor(state.currentPiece.matrix[0].length / 2);
+    let deltaX = bestMove.x - state.currentPiece.x;
 
     if (deltaX > 0) {
         for (let i = 0; i < deltaX; i++) path.push('RIGHT');
@@ -323,152 +322,184 @@ function generateAIPath(bestMove) {
 
 
 function spawnPiece() {
-    currentPiece = getPiece();
-    const cols = grid[0].length;
-    currentPiece.x = Math.floor(cols / 2) - Math.floor(currentPiece.matrix[0].length / 2);
-    currentPiece.y = 0;
+    state.currentPiece = getPiece();
+    const cols = state.grid[0].length;
+    state.currentPiece.x = Math.floor(cols / 2) - Math.floor(state.currentPiece.matrix[0].length / 2);
+    state.currentPiece.y = 0;
 
-    isUserControlling = false;
+    state.isUserControlling = false;
 
     const bestMove = calculateBestMove();
-    aiPath = generateAIPath(bestMove);
-    aiMoveIndex = 0;
+    state.aiPath = generateAIPath(bestMove);
+    state.aiMoveIndex = 0;
 
-    if (collide(grid, currentPiece)) {
-        grid.forEach(row => row.fill(null));
-        score = 0;
+    if (collide(state.grid, state.currentPiece)) {
+        state.grid.forEach(row => row.fill(null));
+        state.score = 0;
     }
 }
 
 function playerMove(dir) {
-    currentPiece.x += dir;
-    if (collide(grid, currentPiece)) {
-        currentPiece.x -= dir;
+    if (!state.currentPiece) return;
+    state.currentPiece.x += dir;
+    if (collide(state.grid, state.currentPiece)) {
+        state.currentPiece.x -= dir;
     }
 }
 
 function playerRotate() {
-    const pos = currentPiece.x;
+    if (!state.currentPiece) return;
+    const pos = state.currentPiece.x;
     let offset = 1;
-    const matrix = rotate(currentPiece.matrix);
-    const originalMatrix = currentPiece.matrix;
-    currentPiece.matrix = matrix;
+    const matrix = rotate(state.currentPiece.matrix);
+    const originalMatrix = state.currentPiece.matrix;
+    state.currentPiece.matrix = matrix;
 
-    while (collide(grid, currentPiece)) {
-        currentPiece.x += offset;
+    while (collide(state.grid, state.currentPiece)) {
+        state.currentPiece.x += offset;
         offset = -(offset + (offset > 0 ? 1 : -1));
-        if (offset > currentPiece.matrix[0].length) {
+        if (offset > state.currentPiece.matrix[0].length) {
             rotate(originalMatrix);
-            currentPiece.matrix = originalMatrix;
-            currentPiece.x = pos;
+            state.currentPiece.matrix = originalMatrix;
+            state.currentPiece.x = pos;
             return;
         }
     }
 }
 
 function playerDrop() {
-    currentPiece.y++;
-    if (collide(grid, currentPiece)) {
-        currentPiece.y--;
-        merge(grid, currentPiece);
+    if (!state.currentPiece) return;
+    state.currentPiece.y++;
+    if (collide(state.grid, state.currentPiece)) {
+        state.currentPiece.y--;
+        merge(state.grid, state.currentPiece);
         spawnPiece();
         arenaSweep();
     }
 }
 
 
-// --- LOOP PRINCIPAL ---
+// --- EFECTO (LIFECYCLE) ---
 
-function tetris_clock(matrix, frameCount) {
-    // 1. Inicialización Lazy
-    const logicCols = Math.floor(Config.COLS / BLOCK_SIZE);
-    const logicRows = Math.floor(Config.ROWS / BLOCK_SIZE);
-
-    if (!grid || grid.length !== logicRows || grid[0].length !== logicCols) {
+const TetrisClockEffect = {
+    mount: (Shared) => {
+        // Inicializar estado
+        state = {
+            grid: [],
+            bag: [],
+            currentPiece: null,
+            score: 0,
+            gameOver: false,
+            frameCounter: 0,
+            isUserControlling: false,
+            aiPath: [],
+            aiMoveIndex: 0,
+            lastUserActionTime: 0
+        };
         initGame();
-    }
+    },
 
-    // 2. Procesar Input de Usuario
-    const inputs = KeyInput.KEY_QUEUE.splice(0, KeyInput.KEY_QUEUE.length);
+    unmount: (Shared) => {
+        // Limpiar memoria
+        state.grid = [];
+        state.bag = [];
+        state.currentPiece = null;
+        state.aiPath = [];
+    },
 
-    if (inputs.length > 0) {
-        isUserControlling = true;
-        lastUserActionTime = Date.now();
+    update: (matrix, globalFrameCount, Shared) => {
+        // 1. Inicialización Lazy (seguridad)
+        const logicCols = Math.floor(Config.COLS / BLOCK_SIZE);
+        const logicRows = Math.floor(Config.ROWS / BLOCK_SIZE);
 
-        inputs.forEach(input => {
-            if (input.key === 'ARROWLEFT') playerMove(-1);
-            if (input.key === 'ARROWRIGHT') playerMove(1);
-            if (input.key === 'ARROWUP') playerRotate();
-            if (input.key === 'ARROWDOWN') playerDrop();
-        });
-    }
+        if (!state.grid || state.grid.length !== logicRows) {
+            initGame();
+        }
 
-    if (Date.now() - lastUserActionTime > 2000) {
-        isUserControlling = false;
-    }
+        // 2. Procesar Input de Usuario
+        const inputs = KeyInput.KEY_QUEUE.splice(0, KeyInput.KEY_QUEUE.length);
 
-    // 3. Lógica de Juego
-    frameCounter++;
-    const speed = isUserControlling ? TICK_RATE_USER : TICK_RATE_AI;
+        if (inputs.length > 0) {
+            state.isUserControlling = true;
+            state.lastUserActionTime = Date.now();
 
-    if (frameCounter % speed === 0) {
-        if (!isUserControlling) {
-            if (aiMoveIndex < aiPath.length) {
-                const move = aiPath[aiMoveIndex];
-                if (move === 'ROTATE') playerRotate();
-                if (move === 'LEFT') playerMove(-1);
-                if (move === 'RIGHT') playerMove(1);
-                aiMoveIndex++;
+            inputs.forEach(input => {
+                if (input.key === 'ARROWLEFT') playerMove(-1);
+                if (input.key === 'ARROWRIGHT') playerMove(1);
+                if (input.key === 'ARROWUP') playerRotate();
+                if (input.key === 'ARROWDOWN') playerDrop();
+            });
+        }
+
+        if (Date.now() - state.lastUserActionTime > 2000) {
+            state.isUserControlling = false;
+        }
+
+        // 3. Lógica de Juego
+        state.frameCounter++;
+        const speed = state.isUserControlling ? TICK_RATE_USER : TICK_RATE_AI;
+
+        if (state.frameCounter % speed === 0) {
+            if (!state.isUserControlling) {
+                if (state.aiMoveIndex < state.aiPath.length) {
+                    const move = state.aiPath[state.aiMoveIndex];
+                    if (move === 'ROTATE') playerRotate();
+                    if (move === 'LEFT') playerMove(-1);
+                    if (move === 'RIGHT') playerMove(1);
+                    state.aiMoveIndex++;
+                } else {
+                    playerDrop();
+                }
             } else {
-                playerDrop();
-            }
-        } else {
-            if (frameCounter % (speed * 4) === 0) {
-                playerDrop();
+                if (state.frameCounter % (speed * 4) === 0) {
+                    playerDrop();
+                }
             }
         }
-    }
 
-    // 4. Renderizado
+        // 4. Renderizado
 
-    // A) Dibujar Tablero
-    grid.forEach((row, y) => {
-        row.forEach((value, x) => {
-            if (value) {
-                const px = x * BLOCK_SIZE;
-                const py = y * BLOCK_SIZE;
+        // A) Dibujar Tablero
+        if (state.grid) {
+            state.grid.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        const px = x * BLOCK_SIZE;
+                        const py = y * BLOCK_SIZE;
 
-                if (py < Config.ROWS && px < Config.COLS) matrix[py][px] = value;
-                if (py < Config.ROWS && px + 1 < Config.COLS) matrix[py][px + 1] = value;
-                if (py + 1 < Config.ROWS && px < Config.COLS) matrix[py + 1][px] = value;
-                if (py + 1 < Config.ROWS && px + 1 < Config.COLS) matrix[py + 1][px + 1] = value;
-            }
-        });
-    });
-
-    // B) Dibujar Pieza Activa
-    if (currentPiece) {
-        currentPiece.matrix.forEach((row, y) => {
-            row.forEach((value, x) => {
-                if (value !== 0) {
-                    const px = (currentPiece.x + x) * BLOCK_SIZE;
-                    const py = (currentPiece.y + y) * BLOCK_SIZE;
-
-                    if (py >= 0 && py < Config.ROWS && px >= 0 && px < Config.COLS) {
-                        if (py < Config.ROWS && px < Config.COLS) matrix[py][px] = currentPiece.color;
-                        if (py < Config.ROWS && px + 1 < Config.COLS) matrix[py][px + 1] = currentPiece.color;
-                        if (py + 1 < Config.ROWS && px < Config.COLS) matrix[py + 1][px] = currentPiece.color;
-                        if (py + 1 < Config.ROWS && px + 1 < Config.COLS) matrix[py + 1][px + 1] = currentPiece.color;
+                        if (py < Config.ROWS && px < Config.COLS) matrix[py][px] = value;
+                        if (py < Config.ROWS && px + 1 < Config.COLS) matrix[py][px + 1] = value;
+                        if (py + 1 < Config.ROWS && px < Config.COLS) matrix[py + 1][px] = value;
+                        if (py + 1 < Config.ROWS && px + 1 < Config.COLS) matrix[py + 1][px + 1] = value;
                     }
-                }
+                });
             });
-        });
+        }
+
+        // B) Dibujar Pieza Activa
+        if (state.currentPiece) {
+            state.currentPiece.matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value !== 0) {
+                        const px = (state.currentPiece.x + x) * BLOCK_SIZE;
+                        const py = (state.currentPiece.y + y) * BLOCK_SIZE;
+
+                        if (py >= 0 && py < Config.ROWS && px >= 0 && px < Config.COLS) {
+                            if (py < Config.ROWS && px < Config.COLS) matrix[py][px] = state.currentPiece.color;
+                            if (py < Config.ROWS && px + 1 < Config.COLS) matrix[py][px + 1] = state.currentPiece.color;
+                            if (py + 1 < Config.ROWS && px < Config.COLS) matrix[py + 1][px] = state.currentPiece.color;
+                            if (py + 1 < Config.ROWS && px + 1 < Config.COLS) matrix[py + 1][px + 1] = state.currentPiece.color;
+                        }
+                    }
+                });
+            });
+        }
+
+        // C) Dibujar Reloj (Sin caja, con outline)
+        drawClock(matrix);
+
+        return matrix;
     }
+};
 
-    // C) Dibujar Reloj (Sin caja, con outline)
-    drawClock(matrix);
-
-    return matrix;
-}
-
-registerEffect('tetris_clock', tetris_clock);
+registerEffect('tetris_clock', TetrisClockEffect);

@@ -1,125 +1,131 @@
-/* style.css - Estilos Globales y Visuales */
+/* styles/style.css - Estilos Unificados (Dashboard + Pixels) */
 
 :root {
-    /* --- Variables del Grid (Se actualizan por JS) --- */
+    /* --- CONSTANTES DEL GRID --- */
     --grid-cols: 32;
+    /* Se actualiza por JS */
     --grid-rows: 32;
+    /* Se actualiza por JS */
 
-    /* --- Paleta Base --- */
-    --bg-color: #000000;
+    /* --- PALETA DE COLORES --- */
     --pixel-color-off: #000000;
     --pixel-color-noise: #0f0f0f;
     --pixel-color-on: #ffffff;
+    --bg-color: #000000;
 
+    /* --- COLORES DE EFECTOS --- */
+    --color-red: #ff003cb9;
+    --color-orange: #ff5e00b9;
+    --color-yellow: #ffde00b9;
+    --color-green: #39ff14b9;
+    --color-blue: #00f3ffb9;
+    --color-purple: #b026ffb9;
+    --color-system: #969696b9;
+
+    /* --- DASHBOARD SPECIFIC --- */
     --neon-green: #00ff41;
     --color-indicator: #ffffffc9;
-    /* Color del Glow inferior */
-
-    /* --- Tipografía --- */
     --font-mono: 'doto', monospace;
 }
 
-/* --- BASE --- */
+/* --- ESTILOS BASE --- */
 body {
     background-color: var(--bg-color);
-    color: var(--pixel-color-on);
-    font-family: var(--font-mono);
-    margin: 0;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
+    margin: 0;
     overflow: hidden;
+    font-family: var(--font-mono);
+    /* Dashboard Font */
+    color: var(--pixel-color-on);
 }
 
-/* --- WRAPPER PRINCIPAL --- */
+/* --- CONTENEDOR DEL DISPLAY --- */
 .display-wrapper {
     background-color: var(--pixel-color-off);
+    cursor: default;
     width: 100vw;
     height: 100vh;
-
-    /* CURSOR VISIBLE (Arreglado) */
-    cursor: default;
-
     position: relative;
+    /* Para el z-index */
     z-index: 2;
-    /* Por encima del glow de fondo */
+    /* Por encima del glow */
 }
 
-/* --- GRID DE PÍXELES --- */
 .pixel-display {
     display: grid;
-    /* Las variables se inyectan desde JS */
     grid-template-columns: repeat(var(--grid-cols), 1fr);
     grid-template-rows: repeat(var(--grid-rows), 1fr);
     width: 100%;
     height: 100%;
     background-color: var(--pixel-color-off);
     gap: 1px;
-    /* Líneas del grid */
 }
 
-/* --- CÉLULA INDIVIDUAL (PÍXEL) --- */
+/* --- PIXEL / LED --- */
 .pixel {
+    box-sizing: border-box;
     background-color: var(--pixel-color-noise);
+    transition: background-color 0.1s ease-out;
     border: none;
     border-radius: 1px;
-    transition: background-color 0.1s ease-out;
 }
 
-/* --- COLORES Y EFECTOS (Movidos desde el HTML) --- */
-.bg-noise {
-    background-color: var(--pixel-color-noise);
-}
-
+/* --- ESTADOS Y COLORES --- */
 .on {
     background-color: var(--pixel-color-on);
     box-shadow: 0 0 5px rgba(200, 200, 200, 0.7);
 }
 
-/* Colores Neón / Cyberpunk */
+.bg-noise {
+    background-color: var(--pixel-color-noise);
+}
+
 .red {
-    background-color: #ff003cb9;
+    background-color: var(--color-red);
     box-shadow: 0 0 8px rgba(255, 0, 60, 0.7);
 }
 
 .orange {
-    background-color: #ff5e00b9;
+    background-color: var(--color-orange);
     box-shadow: 0 0 8px rgba(255, 94, 0, 0.7);
 }
 
 .yellow {
-    background-color: #ffde00b9;
+    background-color: var(--color-yellow);
     box-shadow: 0 0 8px rgba(255, 222, 0, 0.7);
 }
 
 .green {
-    background-color: #39ff14b9;
+    background-color: var(--color-green);
     box-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
 }
 
 .blue {
-    background-color: #00f3ffb9;
+    background-color: var(--color-blue);
     box-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
 }
 
 .purple {
-    background-color: #b026ffb9;
+    background-color: var(--color-purple);
     box-shadow: 0 0 8px rgba(176, 38, 255, 0.7);
 }
 
 .system {
-    background-color: #969696b9;
+    background-color: var(--color-system);
     box-shadow: 0 0 5px #303030b9;
 }
 
+/* --- EFECTOS VISUALES --- */
 .purple-glow {
     background-color: rgba(176, 38, 255, 0.25);
     box-shadow: 0 0 15px 4px rgba(176, 38, 255, 0.65);
     z-index: 0;
 }
 
-/* --- NOTHING STYLE GLOW (Fondo decorativo) --- */
+/* --- DASHBOARD UI (Nothing Phone Style Glow) --- */
 #floating-indicator {
     position: fixed;
     width: 270vw;
@@ -127,7 +133,6 @@ body {
     bottom: -130.4vw;
     left: 50%;
     transform: translateX(-50%);
-    /* Centrado horizontal corregido */
 
     background-color: var(--color-indicator);
     border-radius: 100%;
@@ -137,7 +142,6 @@ body {
 
     animation: pulse-float 4s ease-in-out infinite alternate;
     pointer-events: none;
-    /* Para que no bloquee clicks */
 }
 
 @keyframes pulse-float {
@@ -152,7 +156,7 @@ body {
     }
 }
 
-/* --- UTILIDADES TEXTO --- */
+/* --- TEXT UTILITIES --- */
 .clock-text {
     font-size: 15vw;
     font-weight: 700;
