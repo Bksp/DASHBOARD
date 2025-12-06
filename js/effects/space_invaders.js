@@ -4,7 +4,7 @@ import { registerEffect, Config, KeyInput, MouseInput } from '../core.js';
 const PLAYER_COLOR = 'on';
 const BULLET_COLOR = 'red';
 const ENEMY_COLOR_1 = 'red';
-const ENEMY_COLOR_2 = 'on'; 
+const ENEMY_COLOR_2 = 'on';
 
 const PLAYER_SPEED = 1.0;
 const BULLET_SPEED = 0.5;
@@ -22,7 +22,7 @@ let lives = 3;
 let lastFireTime = 0;
 
 // Partículas de explosión (reutilizamos lógica simple)
-let particles = []; 
+let particles = [];
 
 function initGame(COLS, ROWS) {
     playerX = Math.floor(COLS / 2);
@@ -30,10 +30,10 @@ function initGame(COLS, ROWS) {
     enemies = [];
     particles = [];
     enemyDirection = 1;
-    
+
     // Crear formación de enemigos
     // Dejar márgenes y no llenar todo
-    const rows = 3; 
+    const rows = 3;
     const cols = Math.floor(COLS / 2); // Un enemigo cada 2 pixeles aprox
     const startY = 2;
     const startX = 2;
@@ -70,9 +70,9 @@ function updateGame(COLS, ROWS) {
 
     // 1. MOVER JUGADOR
     // Mouse (Prioridad)
- 
+
     // Teclado
-     {
+    {
         const keys = KeyInput.KEY_QUEUE.splice(0, KeyInput.KEY_QUEUE.length);
         keys.forEach(k => {
             if (k.key === 'ARROWLEFT') playerX -= 1;
@@ -86,7 +86,7 @@ function updateGame(COLS, ROWS) {
             }
         });
     }
-    
+
     // Disparo automático con click derecho (si se desea) o mantener espacio
     // Para simplificar en este entorno, el disparo es manual con espacio/arriba
 
@@ -106,15 +106,15 @@ function updateGame(COLS, ROWS) {
 
     enemies.forEach(e => {
         if (!e.active) return;
-        
+
         // Mover lateral
         e.x += ENEMY_SPEED_X * enemyDirection;
-        
+
         // Detectar bordes
         if (e.x <= 0 || e.x >= COLS - 1) {
             touchEdge = true;
         }
-        
+
         if (e.y > lowestEnemyY) lowestEnemyY = e.y;
     });
 
@@ -129,23 +129,23 @@ function updateGame(COLS, ROWS) {
     // 4. COLISIONES (Bala vs Enemigo)
     bullets.forEach(b => {
         if (!b.active) return;
-        
+
         for (let e of enemies) {
             if (!e.active) continue;
-            
+
             // Colisión simple (distancia < 1)
             if (Math.abs(b.x - e.x) < 1 && Math.abs(b.y - e.y) < 1) {
                 e.active = false;
                 b.active = false;
                 spawnExplosion(e.x, e.y, e.type === 1 ? ENEMY_COLOR_1 : ENEMY_COLOR_2);
-                break; 
+                break;
             }
         }
     });
-    
+
     // Limpiar inactivos
     bullets = bullets.filter(b => b.active);
-    
+
     // 5. GAME OVER / WIN
     // Si los enemigos llegan abajo
     if (lowestEnemyY >= ROWS - 1) {
@@ -180,7 +180,7 @@ function space_invaders(matrix, frameCount) {
     if (px >= 0 && px < COLS) {
         matrix[ROWS - 1][px] = PLAYER_COLOR;
         // Dibujar un punto arriba para simular la punta de la nave
-        if (ROWS - 2 >= 0) matrix[ROWS - 2][px] = PLAYER_COLOR; 
+        if (ROWS - 2 >= 0) matrix[ROWS - 2][px] = PLAYER_COLOR;
     }
 
     // DIBUJAR ENEMIGOS
@@ -192,7 +192,7 @@ function space_invaders(matrix, frameCount) {
                 // Animación simple de "alas" usando frameCount
                 const open = Math.floor(frameCount / 20) % 2 === 0;
                 matrix[ey][ex] = e.type === 1 ? ENEMY_COLOR_1 : ENEMY_COLOR_2;
-                
+
                 // Dibujar alas si hay espacio (opcional para 32x32)
                 // if (open && ex-1 >=0) matrix[ey][ex-1] = e.type === 1 ? ENEMY_COLOR_1 : ENEMY_COLOR_2;
                 // if (open && ex+1 < COLS) matrix[ey][ex+1] = e.type === 1 ? ENEMY_COLOR_1 : ENEMY_COLOR_2;

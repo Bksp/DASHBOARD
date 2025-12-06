@@ -7,7 +7,7 @@ const BALL_COLOR = 'red'; // Blanco
 const BG_COLOR = Config.NOISE_CLASS;
 
 // Velocidades (Ajustadas para ser más lentas)
-const PADDLE_SPEED = 1.0; 
+const PADDLE_SPEED = 1.0;
 // *** CAMBIO: Velocidad de la pelota reducida ***
 const BALL_SPEED_BASE = 0.15; // Antes 0.25
 const POWERUP_SPEED = 0.1;
@@ -37,7 +37,7 @@ let powerupState = {
 function initGame(COLS, ROWS) {
     paddle.x = Math.floor(COLS / 2) - Math.floor(PADDLE_WIDTH_BASE / 2);
     paddle.width = PADDLE_WIDTH_BASE;
-    
+
     // Reiniciar pelotas (empieza con una pegada a la pala)
     balls = [{
         x: paddle.x + Math.floor(paddle.width / 2),
@@ -51,22 +51,22 @@ function initGame(COLS, ROWS) {
     // Crear ladrillos
     bricks = [];
     const rowsOfBricks = Math.floor(ROWS / 4); // Ocupar 1/4 superior
-    const colsOfBricks = COLS; 
-    
+    const colsOfBricks = COLS;
+
     // Dejar un margen superior de 2 filas
     for (let r = 2; r < 2 + rowsOfBricks; r++) {
         for (let c = 1; c < colsOfBricks - 1; c += 2) { // Ladrillos de 1px ancho, separados por 1px
-             if (Math.random() > 0.1) { // 90% de probabilidad de ladrillo
-                 bricks.push({
-                     r: r,
-                     c: c,
-                     color: BRICK_COLORS[(r - 2) % BRICK_COLORS.length],
-                     active: true
-                 });
-             }
+            if (Math.random() > 0.1) { // 90% de probabilidad de ladrillo
+                bricks.push({
+                    r: r,
+                    c: c,
+                    color: BRICK_COLORS[(r - 2) % BRICK_COLORS.length],
+                    active: true
+                });
+            }
         }
     }
-    
+
     powerups = [];
     particles = [];
     gameStarted = true;
@@ -77,7 +77,7 @@ function updateGame(COLS, ROWS) {
     // 1. MOVER PALA (Control con Flechas)
     // Consumimos eventos recientes para mover
     const recentKeys = KeyInput.KEY_QUEUE.splice(0, KeyInput.KEY_QUEUE.length);
-    
+
     recentKeys.forEach(k => {
         if (k.key === 'ARROWLEFT') paddle.x -= PADDLE_SPEED;
         if (k.key === 'ARROWRIGHT') paddle.x += PADDLE_SPEED;
@@ -88,7 +88,7 @@ function updateGame(COLS, ROWS) {
                     b.stuck = false;
                     // Ángulo aleatorio hacia arriba
                     b.vx = (Math.random() > 0.5 ? 1 : -1) * BALL_SPEED_BASE;
-                    b.vy = -BALL_SPEED_BASE; 
+                    b.vy = -BALL_SPEED_BASE;
                 }
             });
         }
@@ -114,7 +114,7 @@ function updateGame(COLS, ROWS) {
             // Rebote Paredes
             if (nextX <= 0 || nextX >= COLS - 1) {
                 b.vx *= -1;
-                nextX = b.x + b.vx; 
+                nextX = b.x + b.vx;
             }
             if (nextY <= 0) {
                 b.vy *= -1;
@@ -122,17 +122,17 @@ function updateGame(COLS, ROWS) {
             }
 
             // Rebote Pala
-            if (nextY >= ROWS - 1 && 
+            if (nextY >= ROWS - 1 &&
                 nextX >= paddle.x && nextX <= paddle.x + paddle.width) {
-                
+
                 b.vy *= -1;
                 // Efecto de ángulo según dónde golpeó
                 const hitPoint = nextX - (paddle.x + paddle.width / 2);
                 b.vx = hitPoint * (BALL_SPEED_BASE * 0.8); // Ajuste suave de ángulo
-                
+
                 // Asegurar que suba y no se quede atascada horizontalmente
-                b.y = ROWS - 2; 
-                if (Math.abs(b.vy) < BALL_SPEED_BASE * 0.5) b.vy = -BALL_SPEED_BASE; 
+                b.y = ROWS - 2;
+                if (Math.abs(b.vy) < BALL_SPEED_BASE * 0.5) b.vy = -BALL_SPEED_BASE;
             }
 
             // Muerte (cae al vacío)
@@ -149,16 +149,16 @@ function updateGame(COLS, ROWS) {
                 // Colisión simple punto vs punto
                 if (Math.round(nextX) === brick.c && Math.round(nextY) === brick.r) {
                     brick.active = false;
-                    b.vy *= -1; 
+                    b.vy *= -1;
                     hit = true;
-                    
+
                     // Generar Partículas
                     spawnExplosion(brick.c, brick.r, [brick.color]);
-                    
+
                     // Generar Powerup (15% prob)
                     if (Math.random() < 0.15) spawnPowerup(brick.c, brick.r);
-                    
-                    break; 
+
+                    break;
                 }
             }
 
@@ -171,7 +171,7 @@ function updateGame(COLS, ROWS) {
 
     // Limpiar pelotas muertas
     balls = balls.filter(b => b.active);
-    
+
     // Si no quedan pelotas, perder vida
     if (balls.length === 0) {
         lives--;
@@ -196,13 +196,13 @@ function updateGame(COLS, ROWS) {
     // 3. ACTUALIZAR POWERUPS
     powerups.forEach(p => {
         if (!p.active) return;
-        p.y += POWERUP_SPEED; 
+        p.y += POWERUP_SPEED;
 
         if (p.y >= ROWS - 1 && p.x >= paddle.x && p.x <= paddle.x + paddle.width) {
             activatePowerup(p.type);
             p.active = false;
         }
-        
+
         if (p.y > ROWS) p.active = false;
     });
     powerups = powerups.filter(p => p.active);
@@ -230,7 +230,7 @@ function spawnExplosion(x, y, colors) {
 }
 
 function spawnPowerup(x, y) {
-    const types = ['multiball', 'wide']; 
+    const types = ['multiball', 'wide'];
     powerups.push({
         x: x, y: y,
         type: types[Math.floor(Math.random() * types.length)],
@@ -270,13 +270,13 @@ function arkanoid(matrix, frameCount) {
         const px = Math.floor(paddle.x + i);
         if (px >= 0 && px < COLS) {
             let color = PADDLE_COLOR;
-            
+
             // Lógica de visualización de vidas en la barra
             // Si la pelota está cargada, los primeros N píxeles de la barra son verdes
             if (isBallStuck && i < lives) {
                 color = 'on';
             }
-            
+
             matrix[ROWS - 1][px] = color;
         }
     }
@@ -311,7 +311,7 @@ function arkanoid(matrix, frameCount) {
         const px = Math.floor(p.x);
         const py = Math.floor(p.y);
         if (px >= 0 && px < COLS && py >= 0 && py < ROWS) {
-            matrix[py][px] = p.color; 
+            matrix[py][px] = p.color;
         }
     });
 

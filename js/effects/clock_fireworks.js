@@ -168,7 +168,7 @@ function clock_fireworks(matrix) {
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const dayName = DAYS[now.getDay()];
-    const dayNum = String(now.getDate());
+    const dayNum = String(now.getDate()).padStart(2, '0');
     const showColon = now.getMilliseconds() < 500;
 
     // Lógica Vertical
