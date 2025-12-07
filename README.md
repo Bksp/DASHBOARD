@@ -1,5 +1,5 @@
 # DASHBOARD - Pixel Display
-![](./assets/preview.png)
+![](./assets/previewHD.png)
 
 https://bksp.github.io/DASHBOARD/pixels.html
 
