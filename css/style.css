@@ -169,3 +169,8 @@ body {
     letter-spacing: 2px;
     opacity: 0.8;
 }
+
+/* --- UTILITIES --- */
+[x-cloak] {
+    display: none !important;
+}

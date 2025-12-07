@@ -2,8 +2,8 @@ const CACHE_NAME = 'pixel-dashboard-v1';
 const ASSETS_TO_CACHE = [
     './pixels.html',
     './manifest.json',
-    './img/favicon.png',
-    './styles/style.css',
+    './assets/favicon.png',
+    './css/style.css',
     'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js'
 ];
 
