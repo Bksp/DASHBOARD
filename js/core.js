@@ -56,7 +56,7 @@ export const Shared = {
 // --- INPUTS ---
 const KEY_QUEUE = [];
 const KEYS_PRESSED = new Set(); // Estado continuo
-const MAX_KEY_HISTORY = 300;
+const MAX_KEY_HISTORY = 40;
 let mousePosition = { c: -1, r: -1 };
 
 // --- CONFIGURACIÓN DE INTERACCIÓN ---
