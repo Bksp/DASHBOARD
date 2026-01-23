@@ -50,7 +50,6 @@ async function initApp() {
     const effects = [
         './effects/digital_clock.js',
         './effects/expanding_circle.js',
-        './effects/key_tester.js',
         './effects/led_tracker.js',
         //'./effects/scrolling_marquee.js',
         //'./effects/spectrum_analyzer.js',
@@ -62,6 +61,8 @@ async function initApp() {
         //'./effects/space_invaders.js',
         //'./effects/matrix_rain.js',
         //'./effects/pong.js',
+        './effects/key_tester.js',
+        './effects/buyFont.js',
         './effects/color_plasma.js'
     ];
 

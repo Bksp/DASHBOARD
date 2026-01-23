@@ -15,7 +15,7 @@ let state = {
 };
 
 // --- CLASE PARTICLE (Partículas de la explosión) ---
-class Particle {
+export class Particle {
     constructor(startX, startY, color, velocity) {
         this.init(startX, startY, color, velocity);
     }
@@ -43,7 +43,7 @@ class Particle {
 }
 
 // --- CLASE FIREWORK (Cohete de lanzamiento) ---
-class Firework {
+export class Firework {
     constructor() {
         this.active = false;
         this.particles = [];

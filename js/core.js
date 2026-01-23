@@ -253,6 +253,11 @@ function handleClick(e) {
         e.preventDefault();
         isLongPress = false;
     } else {
+        const currentEffect = EFFECTS[currentEffectName];
+        if (currentEffect && typeof currentEffect.onClick === 'function') {
+            // Si el efecto maneja el clic y devuelve true, no cambiamos de efecto
+            if (currentEffect.onClick(e)) return;
+        }
         cycleEffect();
     }
 }
